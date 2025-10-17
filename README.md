@@ -2,7 +2,7 @@
 
 ![Status do Projeto: Em Desenvolvimento](https://img.shields.io/badge/status-em_desenvolvimento-yellow)
 
-Sistema web para agendamento e gerenciamento de quadras esportivas no campus do Senac, focado na digitalização e otimização de reservas.
+Sistema web para agendamento e gerenciamento de quadras esportivas no campus do Centro Univercitário Senac, focado na digitalização e otimização de reservas.
 
 ## 🎯 Sobre o Projeto
 
