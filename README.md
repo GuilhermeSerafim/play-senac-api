@@ -2,20 +2,20 @@
 
 ![Status do Projeto: Em Desenvolvimento](https://img.shields.io/badge/status-em_desenvolvimento-yellow)
 
-Sistema web para agendamento e gerenciamento de quadras esportivas no campus do Centro Universitário Senac, focado na digitalização e otimização de reservas.
+Sistema web para agendamento e gerenciamento de quadras esportivas no Centro Universitário Senac, focado na digitalização e otimização de reservas.
 
 ## 🎯 Sobre o Projeto
 
-O **Play Senac** nasceu para modernizar a gestão das quadras esportivas da instituição. O objetivo principal é substituir processos manuais, como agendamentos por telefone ou planilhas, por uma operação digital centralizada.
+O **Play Senac** nasceu para modernizar a gestão das quadras esportivas da instituição. O objetivo principal é substituir processos manuais por uma operação digital centralizada.
 
-A plataforma permite o CRUD (Criação, Leitura, Atualização e Deleção) de reservas, oferecendo uma interface moderna, intuitiva e responsiva, acessível de qualquer dispositivo.
+A plataforma permite o CRUD (Criação, Leitura, Atualização e Deleção) de reservas e quadras, oferecendo uma interface moderna, intuitiva e responsiva, acessível de qualquer dispositivo.
 
 ## ✨ Funcionalidades Principais
 
 * **Agendamento Rápido:** Usuários podem visualizar horários disponíveis e reservar quadras em poucos cliques.
 * **Gestão de Reservas:** Painel administrativo para gerenciar todos os agendamentos (aprovar, cancelar, editar).
 * **Visualização em Tempo Real:** Um calendário ou *dashboard* que exibe a ocupação das quadras em tempo real.
-* **(Em breve):** Histórico de agendamentos e notificações.
+* **(Em breve):** Histórico de agendamentos, relatórios e notificações.
 
 ## 🛠️ Tecnologias Utilizadas
 
