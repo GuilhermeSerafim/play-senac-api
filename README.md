@@ -4,8 +4,6 @@
 
 Sistema web para agendamento e gerenciamento de quadras esportivas no campus do Centro Universitário Senac, focado na digitalização e otimização de reservas.
 
-demonstração alteração
-
 ## 🎯 Sobre o Projeto
 
 O **Play Senac** nasceu para modernizar a gestão das quadras esportivas da instituição. O objetivo principal é substituir processos manuais, como agendamentos por telefone ou planilhas, por uma operação digital centralizada.
