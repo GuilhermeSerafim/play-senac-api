@@ -3,6 +3,7 @@ package com.playsenac.api.model;
 import jakarta.persistence.*;
 
 import java.time.LocalTime;
+import java.util.List;
 
 @Entity
 @Table(name = "quadra")
@@ -11,11 +12,21 @@ public class Quadra {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id_quadra;
+
+    @Column(unique = true)
     private String nome;
+
     private String status;
+
     private Integer dia_semana;
+
     private LocalTime horario_abertura;
+
     private LocalTime horario_fechamento;
+
+    @OneToMany(mappedBy = "quadra")
+    private List<Reserva> reservas;
+
 
     public Quadra() {
     }
@@ -75,5 +86,13 @@ public class Quadra {
 
     public void setHorario_fechamento(LocalTime horario_fechamento) {
         this.horario_fechamento = horario_fechamento;
+    }
+
+    public List<Reserva> getReservas() {
+        return reservas;
+    }
+
+    public void setReservas(List<Reserva> reservas) {
+        this.reservas = reservas;
     }
 }
