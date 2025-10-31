@@ -33,14 +33,14 @@ public class QuadraEntity {
 
     private boolean interna;
 
-    @OneToMany(mappedBy = "quadra")
-    private List<ReservaEntity> reservas;
+    //@OneToMany(mappedBy = "quadra")
+    //private List<ReservaEntity> reservas;
 
 
     public QuadraEntity() {
     }
 
-    public QuadraEntity(String nome, String status, Integer diaSemana, LocalTime horarioAbertura, LocalTime horarioFechamento, Integer limiteJogadores, boolean interna, List<ReservaEntity> reservas) {
+    public QuadraEntity(String nome, String status, Integer diaSemana, LocalTime horarioAbertura, LocalTime horarioFechamento, Integer limiteJogadores, boolean interna /*List<ReservaEntity> reservas*/) {
         this.nome = nome;
         this.status = status;
         this.diaSemana = diaSemana;
@@ -48,7 +48,7 @@ public class QuadraEntity {
         this.horarioFechamento = horarioFechamento;
         this.limiteJogadores = limiteJogadores;
         this.interna = interna;
-        this.reservas = reservas;
+        /* this.reservas = reservas;*/
     }
 
     public Integer getId() {
@@ -115,11 +115,11 @@ public class QuadraEntity {
         this.interna = interna;
     }
 
-    public List<ReservaEntity> getReservas() {
+    /* public List<ReservaEntity> getReservas() {
         return reservas;
-    }
+    } */
 
-    public void setReservas(List<ReservaEntity> reservas) {
+   /* public void setReservas(List<ReservaEntity> reservas) {
         this.reservas = reservas;
-    }
+    } */
 }
