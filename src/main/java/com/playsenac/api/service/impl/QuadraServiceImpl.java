@@ -7,6 +7,7 @@ import com.playsenac.api.service.QuadraService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,10 +20,11 @@ public class QuadraServiceImpl implements QuadraService {
     private QuadraRepository quadraRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<QuadraDTO> findAll() {
         List<QuadraEntity> entities = quadraRepository.findAll();
         List<QuadraDTO> resultado = new ArrayList<>();
-        for (QuadraEntity entity : entities){
+        for (QuadraEntity entity : entities) {
             QuadraDTO dto = new QuadraDTO(entity.getNome(),
                     entity.getStatus(),
                     entity.getDiaSemana(),
@@ -37,9 +39,10 @@ public class QuadraServiceImpl implements QuadraService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public QuadraDTO findById(Integer id) {
         Optional<QuadraEntity> optQuadraEntity = quadraRepository.findById(id);
-        if (optQuadraEntity.isEmpty()){
+        if (optQuadraEntity.isEmpty()) {
             throw new EntityNotFoundException("Quadra não encontrada para o ID: " + id);
         }
         QuadraEntity entity = optQuadraEntity.get();
@@ -57,6 +60,7 @@ public class QuadraServiceImpl implements QuadraService {
     }
 
     @Override
+    @Transactional
     public QuadraDTO addNew(QuadraDTO dto) {
         QuadraEntity entity = new QuadraEntity();
         entity.setNome(dto.getNome());
@@ -80,6 +84,7 @@ public class QuadraServiceImpl implements QuadraService {
     }
 
     @Override
+    @Transactional
     public QuadraDTO update(Integer id, QuadraDTO dto) {
         QuadraEntity entidade = quadraRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Quadra não encontrada para o ID: " + id));
@@ -104,8 +109,13 @@ public class QuadraServiceImpl implements QuadraService {
                 entidadeAtualizada.isInterna()
         );
     }
-    @Override
-    public void delete(Integer id) {
 
+    @Override
+    @Transactional
+    public void delete(Integer id) {
+        QuadraEntity entidade = quadraRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Quadra não encontrada para o ID: " + id));
+        quadraRepository.delete(entidade);
     }
+
 }

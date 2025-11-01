@@ -31,74 +31,73 @@ public class QuadraDTO {
 
     private boolean interna;
 
-	public QuadraDTO(@NotBlank @Size(min = 3) String nome, @NotBlank String status, @NotNull Integer diaSemana,
-			@NotNull LocalTime horarioAbertura, @NotNull LocalTime horarioFechamento, Integer limiteJogadores,
-			boolean interna) {
-		this.nome = nome;
-		this.status = status;
-		this.diaSemana = diaSemana;
-		this.horarioAbertura = horarioAbertura;
-		this.horarioFechamento = horarioFechamento;
-		this.limiteJogadores = limiteJogadores;
-		this.interna = interna;
-	}
+    public QuadraDTO(@NotBlank @Size(min = 3) String nome, @NotBlank String status, @NotNull Integer diaSemana,
+                     @NotNull LocalTime horarioAbertura, @NotNull LocalTime horarioFechamento, Integer limiteJogadores,
+                     boolean interna) {
+        this.nome = nome;
+        this.status = status;
+        this.diaSemana = diaSemana;
+        this.horarioAbertura = horarioAbertura;
+        this.horarioFechamento = horarioFechamento;
+        this.limiteJogadores = limiteJogadores;
+        this.interna = interna;
+    }
 
-	public String getNome() {
-		return nome;
-	}
+    public String getNome() {
+        return nome;
+    }
 
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-	public Integer getDiaSemana() {
-		return diaSemana;
-	}
+    public Integer getDiaSemana() {
+        return diaSemana;
+    }
 
-	public void setDiaSemana(Integer diaSemana) {
-		this.diaSemana = diaSemana;
-	}
+    public void setDiaSemana(Integer diaSemana) {
+        this.diaSemana = diaSemana;
+    }
 
-	public LocalTime getHorarioAbertura() {
-		return horarioAbertura;
-	}
+    public LocalTime getHorarioAbertura() {
+        return horarioAbertura;
+    }
 
-	public void setHorarioAbertura(LocalTime horarioAbertura) {
-		this.horarioAbertura = horarioAbertura;
-	}
+    public void setHorarioAbertura(LocalTime horarioAbertura) {
+        this.horarioAbertura = horarioAbertura;
+    }
 
-	public LocalTime getHorarioFechamento() {
-		return horarioFechamento;
-	}
+    public LocalTime getHorarioFechamento() {
+        return horarioFechamento;
+    }
 
-	public void setHorarioFechamento(LocalTime horarioFechamento) {
-		this.horarioFechamento = horarioFechamento;
-	}
+    public void setHorarioFechamento(LocalTime horarioFechamento) {
+        this.horarioFechamento = horarioFechamento;
+    }
 
-	public Integer getLimiteJogadores() {
-		return limiteJogadores;
-	}
+    public Integer getLimiteJogadores() {
+        return limiteJogadores;
+    }
 
-	public void setLimiteJogadores(Integer limiteJogadores) {
-		this.limiteJogadores = limiteJogadores;
-	}
+    public void setLimiteJogadores(Integer limiteJogadores) {
+        this.limiteJogadores = limiteJogadores;
+    }
 
-	public boolean isInterna() {
-		return interna;
-	}
+    public boolean isInterna() {
+        return interna;
+    }
 
-	public void setInterna(boolean interna) {
-		this.interna = interna;
-	}
+    public void setInterna(boolean interna) {
+        this.interna = interna;
+    }
 
-    
-    
+
 }
