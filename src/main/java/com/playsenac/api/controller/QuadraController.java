@@ -37,7 +37,7 @@ public ResponseEntity<QuadraDTO> findById(@PathVariable Integer id){
 }
 
 @PostMapping
-public ResponseEntity<QuadraDTO> criarQuadra(@RequestBody @Valid QuadraDTO quadraDTO){
+public ResponseEntity<QuadraDTO> addNew(@RequestBody @Valid QuadraDTO quadraDTO){
     QuadraDTO quadraDto = service.addNew(quadraDTO);
 
     URI location = ServletUriComponentsBuilder
@@ -46,6 +46,18 @@ public ResponseEntity<QuadraDTO> criarQuadra(@RequestBody @Valid QuadraDTO quadr
             .buildAndExpand(quadraDto.getNome())
             .toUri();
             return ResponseEntity.created(location).build();
+}
+
+@PutMapping("/{id}")
+public ResponseEntity<QuadraDTO> update (@PathVariable Integer id, @RequestBody @Valid QuadraDTO quadraDTO) {
+ QuadraDTO dto = service.findById(id);
+ if (dto == null){
+     return ResponseEntity.notFound().build();
+ }
+
+ dto = service.update(id,quadraDTO);
+ return ResponseEntity.noContent().build();
+
 }
 
 }

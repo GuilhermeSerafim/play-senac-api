@@ -8,8 +8,7 @@ import lombok.Data;
 
 import java.time.LocalTime;
 
-@Data
-@AllArgsConstructor
+
 public class QuadraDTO {
 
     @NotBlank

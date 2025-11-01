@@ -80,12 +80,32 @@ public class QuadraServiceImpl implements QuadraService {
     }
 
     @Override
-    public QuadraDTO atualizarQuadra(Integer id, QuadraDTO dto) {
-        return null;
-    }
+    public QuadraDTO update(Integer id, QuadraDTO dto) {
+        QuadraEntity entidade = quadraRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Quadra não encontrada para o ID: " + id));
 
+        entidade.setNome(dto.getNome());
+        entidade.setStatus(dto.getStatus());
+        entidade.setDiaSemana(dto.getDiaSemana());
+        entidade.setHorarioAbertura(dto.getHorarioAbertura());
+        entidade.setHorarioFechamento(dto.getHorarioFechamento());
+        entidade.setLimiteJogadores(dto.getLimiteJogadores());
+        entidade.setInterna(dto.isInterna());
+
+        QuadraEntity entidadeAtualizada = quadraRepository.save(entidade);
+
+        return new QuadraDTO(
+                entidadeAtualizada.getNome(),
+                entidadeAtualizada.getStatus(),
+                entidadeAtualizada.getDiaSemana(),
+                entidadeAtualizada.getHorarioAbertura(),
+                entidadeAtualizada.getHorarioFechamento(),
+                entidadeAtualizada.getLimiteJogadores(),
+                entidadeAtualizada.isInterna()
+        );
+    }
     @Override
-    public void deletarQuadra(Integer id) {
+    public void delete(Integer id) {
 
     }
 }
