@@ -2,6 +2,8 @@ package com.playsenac.api.controller;
 
 import com.playsenac.api.dto.QuadraDTO;
 import com.playsenac.api.service.QuadraService;
+import com.playsenac.api.service.impl.QuadraServiceImpl;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,16 +26,26 @@ public List<QuadraDTO> findAll(){
     return service.findAll();
 }
 
+@GetMapping("/{id}")
+public ResponseEntity<QuadraDTO> findById(@PathVariable Integer id){
+    try {
+        QuadraDTO quadra = service.findById(id);
+        return ResponseEntity.ok(quadra);
+    } catch (EntityNotFoundException e) {
+        return ResponseEntity.notFound().build();
+    }
+}
+
 @PostMapping
 public ResponseEntity<QuadraDTO> criarQuadra(@RequestBody @Valid QuadraDTO quadraDTO){
     QuadraDTO quadraDto = service.addNew(quadraDTO);
 
     URI location = ServletUriComponentsBuilder
             .fromCurrentRequest()
-            .path("/{id}")
+            .path("/{nome}")
             .buildAndExpand(quadraDto.getNome())
             .toUri();
-    return ResponseEntity.created(location).body(quadraDto);
+            return ResponseEntity.created(location).build();
 }
 
 }

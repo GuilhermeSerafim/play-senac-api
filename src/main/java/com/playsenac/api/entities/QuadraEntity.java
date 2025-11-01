@@ -11,7 +11,7 @@ public class QuadraEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Integer id_quadra;
 
     @Column(unique = true, nullable = false)
     private String nome;
@@ -52,11 +52,11 @@ public class QuadraEntity {
     }
 
     public Integer getId() {
-        return id;
+        return id_quadra;
     }
 
     public void setId(Integer id) {
-        this.id = id;
+        this.id_quadra = id;
     }
 
     public String getNome() {

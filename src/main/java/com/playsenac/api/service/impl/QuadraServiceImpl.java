@@ -4,20 +4,19 @@ import com.playsenac.api.dto.QuadraDTO;
 import com.playsenac.api.entities.QuadraEntity;
 import com.playsenac.api.repository.QuadraRepository;
 import com.playsenac.api.service.QuadraService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class QuadraServiceImpl implements QuadraService {
 
     @Autowired
     private QuadraRepository quadraRepository;
-
-
-
 
     @Override
     public List<QuadraDTO> findAll() {
@@ -39,7 +38,22 @@ public class QuadraServiceImpl implements QuadraService {
 
     @Override
     public QuadraDTO findById(Integer id) {
-    return null;
+        Optional<QuadraEntity> optQuadraEntity = quadraRepository.findById(id);
+        if (optQuadraEntity.isEmpty()){
+            throw new EntityNotFoundException("Quadra não encontrada para o ID: " + id);
+        }
+        QuadraEntity entity = optQuadraEntity.get();
+
+        QuadraDTO dto = new QuadraDTO(
+                entity.getNome(),
+                entity.getStatus(),
+                entity.getDiaSemana(),
+                entity.getHorarioAbertura(),
+                entity.getHorarioFechamento(),
+                entity.getLimiteJogadores(),
+                entity.isInterna()
+        );
+        return dto;
     }
 
     @Override
@@ -62,7 +76,6 @@ public class QuadraServiceImpl implements QuadraService {
                 entity.getLimiteJogadores(),
                 entity.isInterna()
         );
-
         return resultado;
     }
 
