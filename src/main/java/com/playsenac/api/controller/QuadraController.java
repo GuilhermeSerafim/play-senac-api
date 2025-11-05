@@ -40,7 +40,11 @@ public class QuadraController {
     public ResponseEntity<QuadraDTO> addNew(@RequestBody @Valid QuadraDTO quadraDTO) {
         QuadraDTO quadraDto = service.addNew(quadraDTO);
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{nome}").buildAndExpand(quadraDto.getNome()).toUri();
+        URI location = ServletUriComponentsBuilder.
+                fromCurrentRequest()
+                .path("/{nome}")
+                .buildAndExpand(quadraDto.getNome())
+                .toUri();
 
         return ResponseEntity.created(location).build();
     }

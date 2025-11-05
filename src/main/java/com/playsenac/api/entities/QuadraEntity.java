@@ -16,8 +16,7 @@ public class QuadraEntity {
     @Column(unique = true, nullable = false)
     private String nome;
 
-    @Column(nullable = false)
-    private String status;
+    private boolean status;
 
     @Column(name = "dia_semana", nullable = false)
     private Integer diaSemana;
@@ -40,9 +39,8 @@ public class QuadraEntity {
     public QuadraEntity() {
     }
 
-    public QuadraEntity(String nome, String status, Integer diaSemana, LocalTime horarioAbertura, LocalTime horarioFechamento, Integer limiteJogadores, boolean interna, List<ReservaEntity> reservas) {
+    public QuadraEntity(String nome,Integer diaSemana, LocalTime horarioAbertura, LocalTime horarioFechamento, Integer limiteJogadores, boolean interna, List<ReservaEntity> reservas) {
         this.nome = nome;
-        this.status = status;
         this.diaSemana = diaSemana;
         this.horarioAbertura = horarioAbertura;
         this.horarioFechamento = horarioFechamento;
@@ -65,14 +63,6 @@ public class QuadraEntity {
 
     public void setNome(String nome) {
         this.nome = nome;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     public Integer getDiaSemana() {
@@ -121,5 +111,13 @@ public class QuadraEntity {
 
     public void setReservas(List<ReservaEntity> reservas) {
         this.reservas = reservas;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 }

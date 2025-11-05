@@ -9,9 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+
 import java.util.List;
-import java.util.Optional;
+
 
 @Service
 public class QuadraServiceImpl implements QuadraService {
@@ -22,92 +22,46 @@ public class QuadraServiceImpl implements QuadraService {
     @Override
     @Transactional(readOnly = true)
     public List<QuadraDTO> findAll() {
-        List<QuadraEntity> entities = quadraRepository.findAll();
-        List<QuadraDTO> resultado = new ArrayList<>();
-        for (QuadraEntity entity : entities) {
-            QuadraDTO dto = new QuadraDTO(entity.getNome(),
-                    entity.getStatus(),
-                    entity.getDiaSemana(),
-                    entity.getHorarioAbertura(),
-                    entity.getHorarioFechamento(),
-                    entity.getLimiteJogadores(),
-                    entity.isInterna()
-            );
-            resultado.add(dto);
-        }
-        return resultado;
+        return quadraRepository.findAll()
+                .stream()
+                .map(QuadraDTO::fromEntity)
+                .toList();
     }
 
     @Override
     @Transactional(readOnly = true)
     public QuadraDTO findById(Integer id) {
-        Optional<QuadraEntity> optQuadraEntity = quadraRepository.findById(id);
-        if (optQuadraEntity.isEmpty()) {
-            throw new EntityNotFoundException("Quadra não encontrada para o ID: " + id);
-        }
-        QuadraEntity entity = optQuadraEntity.get();
-
-        QuadraDTO dto = new QuadraDTO(
-                entity.getNome(),
-                entity.getStatus(),
-                entity.getDiaSemana(),
-                entity.getHorarioAbertura(),
-                entity.getHorarioFechamento(),
-                entity.getLimiteJogadores(),
-                entity.isInterna()
-        );
-        return dto;
+        QuadraEntity entity = quadraRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Quadra não encontrada para o ID: " + id));
+        return QuadraDTO.fromEntity(entity);
     }
 
     @Override
     @Transactional
     public QuadraDTO addNew(QuadraDTO dto) {
-        QuadraEntity entity = new QuadraEntity();
-        entity.setNome(dto.getNome());
-        entity.setStatus(dto.getStatus());
-        entity.setDiaSemana(dto.getDiaSemana());
-        entity.setHorarioAbertura(dto.getHorarioAbertura());
-        entity.setHorarioFechamento(dto.getHorarioFechamento());
-        entity.setLimiteJogadores(dto.getLimiteJogadores());
-        entity.setInterna(dto.isInterna());
+        QuadraEntity entity = dto.toEntity();
         entity = quadraRepository.save(entity);
-        QuadraDTO resultado = new QuadraDTO(
-                entity.getNome(),
-                entity.getStatus(),
-                entity.getDiaSemana(),
-                entity.getHorarioAbertura(),
-                entity.getHorarioFechamento(),
-                entity.getLimiteJogadores(),
-                entity.isInterna()
-        );
-        return resultado;
+        return QuadraDTO.fromEntity(entity);
     }
 
     @Override
     @Transactional
     public QuadraDTO update(Integer id, QuadraDTO dto) {
-        QuadraEntity entidade = quadraRepository.findById(id)
+        QuadraEntity entity = quadraRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Quadra não encontrada para o ID: " + id));
 
-        entidade.setNome(dto.getNome());
-        entidade.setStatus(dto.getStatus());
-        entidade.setDiaSemana(dto.getDiaSemana());
-        entidade.setHorarioAbertura(dto.getHorarioAbertura());
-        entidade.setHorarioFechamento(dto.getHorarioFechamento());
-        entidade.setLimiteJogadores(dto.getLimiteJogadores());
-        entidade.setInterna(dto.isInterna());
 
-        QuadraEntity entidadeAtualizada = quadraRepository.save(entidade);
+        entity.setNome(dto.getNome());
+        entity.setStatus(dto.isStatus());
+        entity.setDiaSemana(dto.getDiaSemana());
+        entity.setHorarioAbertura(dto.getHorarioAbertura());
+        entity.setHorarioFechamento(dto.getHorarioFechamento());
+        entity.setLimiteJogadores(dto.getLimiteJogadores());
+        entity.setInterna(dto.isInterna());
 
-        return new QuadraDTO(
-                entidadeAtualizada.getNome(),
-                entidadeAtualizada.getStatus(),
-                entidadeAtualizada.getDiaSemana(),
-                entidadeAtualizada.getHorarioAbertura(),
-                entidadeAtualizada.getHorarioFechamento(),
-                entidadeAtualizada.getLimiteJogadores(),
-                entidadeAtualizada.isInterna()
-        );
+        entity = quadraRepository.save(entity);
+
+        return QuadraDTO.fromEntity(entity);
     }
 
     @Override

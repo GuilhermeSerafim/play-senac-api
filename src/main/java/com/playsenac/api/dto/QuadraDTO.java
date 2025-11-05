@@ -1,5 +1,6 @@
 package com.playsenac.api.dto;
 
+import com.playsenac.api.entities.QuadraEntity;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -11,8 +12,7 @@ public class QuadraDTO {
     @Size(min = 3)
     private String nome;
 
-    @NotBlank
-    private String status;
+    private boolean status;
 
     @NotNull
     private Integer diaSemana;
@@ -27,7 +27,7 @@ public class QuadraDTO {
 
     private boolean interna;
 
-    public QuadraDTO(@NotBlank @Size(min = 3) String nome, @NotBlank String status, @NotNull Integer diaSemana,
+    public QuadraDTO(@NotBlank @Size(min = 3) String nome, boolean status, @NotNull Integer diaSemana,
                      @NotNull LocalTime horarioAbertura, @NotNull LocalTime horarioFechamento, Integer limiteJogadores,
                      boolean interna) {
         this.nome = nome;
@@ -47,13 +47,6 @@ public class QuadraDTO {
         this.nome = nome;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
 
     public Integer getDiaSemana() {
         return diaSemana;
@@ -94,6 +87,39 @@ public class QuadraDTO {
     public void setInterna(boolean interna) {
         this.interna = interna;
     }
+
+    public boolean isStatus(){
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+
+    public static QuadraDTO fromEntity(QuadraEntity entity) {
+        return new QuadraDTO(
+                entity.getNome(),
+                entity.isStatus(),
+                entity.getDiaSemana(),
+                entity.getHorarioAbertura(),
+                entity.getHorarioFechamento(),
+                entity.getLimiteJogadores(),
+                entity.isInterna()
+        );
+    }
+
+    public QuadraEntity toEntity() {
+        QuadraEntity entity = new QuadraEntity();
+        entity.setNome(this.getNome());
+        entity.setStatus(this.isStatus());
+        entity.setDiaSemana(this.getDiaSemana());
+        entity.setHorarioAbertura(this.getHorarioAbertura());
+        entity.setHorarioFechamento(this.getHorarioFechamento());
+        entity.setLimiteJogadores(this.getLimiteJogadores());
+        entity.setInterna(this.isInterna());
+        return entity;
+    }
+
 
 
 }
