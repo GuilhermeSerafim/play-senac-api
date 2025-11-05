@@ -53,7 +53,6 @@ public class QuadraServiceImpl implements QuadraService {
 
         entity.setNome(dto.getNome());
         entity.setStatus(dto.isStatus());
-        entity.setDiaSemana(dto.getDiaSemana());
         entity.setHorarioAbertura(dto.getHorarioAbertura());
         entity.setHorarioFechamento(dto.getHorarioFechamento());
         entity.setLimiteJogadores(dto.getLimiteJogadores());

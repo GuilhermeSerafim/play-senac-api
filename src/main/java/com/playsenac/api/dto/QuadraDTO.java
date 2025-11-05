@@ -15,9 +15,6 @@ public class QuadraDTO {
     private boolean status;
 
     @NotNull
-    private Integer diaSemana;
-
-    @NotNull
     private LocalTime horarioAbertura;
 
     @NotNull
@@ -27,12 +24,11 @@ public class QuadraDTO {
 
     private boolean interna;
 
-    public QuadraDTO(@NotBlank @Size(min = 3) String nome, boolean status, @NotNull Integer diaSemana,
+    public QuadraDTO(@NotBlank @Size(min = 3) String nome, boolean status,
                      @NotNull LocalTime horarioAbertura, @NotNull LocalTime horarioFechamento, Integer limiteJogadores,
                      boolean interna) {
         this.nome = nome;
         this.status = status;
-        this.diaSemana = diaSemana;
         this.horarioAbertura = horarioAbertura;
         this.horarioFechamento = horarioFechamento;
         this.limiteJogadores = limiteJogadores;
@@ -47,14 +43,6 @@ public class QuadraDTO {
         this.nome = nome;
     }
 
-
-    public Integer getDiaSemana() {
-        return diaSemana;
-    }
-
-    public void setDiaSemana(Integer diaSemana) {
-        this.diaSemana = diaSemana;
-    }
 
     public LocalTime getHorarioAbertura() {
         return horarioAbertura;
@@ -100,7 +88,6 @@ public class QuadraDTO {
         return new QuadraDTO(
                 entity.getNome(),
                 entity.isStatus(),
-                entity.getDiaSemana(),
                 entity.getHorarioAbertura(),
                 entity.getHorarioFechamento(),
                 entity.getLimiteJogadores(),
@@ -112,7 +99,6 @@ public class QuadraDTO {
         QuadraEntity entity = new QuadraEntity();
         entity.setNome(this.getNome());
         entity.setStatus(this.isStatus());
-        entity.setDiaSemana(this.getDiaSemana());
         entity.setHorarioAbertura(this.getHorarioAbertura());
         entity.setHorarioFechamento(this.getHorarioFechamento());
         entity.setLimiteJogadores(this.getLimiteJogadores());
