@@ -28,7 +28,10 @@ public class SecurityConfig {
 		encoders.put("bycrypt", bcryptEnc);
 		encoders.put("noop", NoOpPasswordEncoder.getInstance());
 		var passwordEncoder = new DelegatingPasswordEncoder("bycrypt", encoders);
-		passwordEncoder.setDefaultPasswordEncoderForMatches(bcryptEnc);
+		/* na linha x deve ser trocada para passwordEncoder.setDefaultPasswordEncoderForMatches(bcryptEnc).
+		 * para realizar a validação da senha com criptografia, atualmente compara texto simples como .equals;
+		 * */
+		passwordEncoder.setDefaultPasswordEncoderForMatches(NoOpPasswordEncoder.getInstance());
 		return passwordEncoder;
 	}
 	

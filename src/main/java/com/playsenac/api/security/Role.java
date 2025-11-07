@@ -1,5 +1,7 @@
 package com.playsenac.api.security;
 
+import java.util.Set;
+
 import org.springframework.security.core.GrantedAuthority;
 
 import jakarta.persistence.Column;
@@ -7,6 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -15,10 +18,14 @@ public class Role implements GrantedAuthority {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id_role")
 	private int id_role;
 	
 	@Column(name = "nome", unique = true)
 	private String nome;
+	
+	@OneToMany(mappedBy = "role")
+	private Set<UsuarioSistema> usuarios;
 	
 	public Role() { }
 
@@ -37,10 +44,18 @@ public class Role implements GrantedAuthority {
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
+	
+	public Set<UsuarioSistema> getUsuarios() {
+		return usuarios;
+	}
+
+	public void setUsuarios(Set<UsuarioSistema> usuarios) {
+		this.usuarios = usuarios;
+	}
 
 	@Override
 	public String getAuthority() {
-		return nome;
+		return nome.toUpperCase();
 	}
 	
 	

@@ -2,6 +2,7 @@ package com.playsenac.api.security;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,7 +31,7 @@ public class UsuarioSistema implements UserDetails{
 	private String senha;
 	
 	@ManyToOne
-	@JoinColumn(name = "fk_role")
+	@JoinColumn(name = "fk_role", nullable = false)
 	private Role role;
 	
 	public UsuarioSistema() { }
@@ -69,7 +70,7 @@ public class UsuarioSistema implements UserDetails{
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return role == null ? Collections.emptyList() : Collections.singletonList(role);
+		return List.of(role);
 	}
 
 	@Override
