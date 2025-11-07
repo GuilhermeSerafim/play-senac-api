@@ -1,26 +1,18 @@
 package com.playsenac.api.dto;
 
+import com.playsenac.api.entities.QuadraEntity;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
 import java.time.LocalTime;
 
-@Data
-@AllArgsConstructor
 public class QuadraDTO {
 
     @NotBlank
     @Size(min = 3)
     private String nome;
 
-    @NotBlank
-    private String status;
-
-    @NotNull
-    private Integer diaSemana;
+    private boolean status;
 
     @NotNull
     private LocalTime horarioAbertura;
@@ -32,74 +24,88 @@ public class QuadraDTO {
 
     private boolean interna;
 
-	public QuadraDTO(@NotBlank @Size(min = 3) String nome, @NotBlank String status, @NotNull Integer diaSemana,
-			@NotNull LocalTime horarioAbertura, @NotNull LocalTime horarioFechamento, Integer limiteJogadores,
-			boolean interna) {
-		this.nome = nome;
-		this.status = status;
-		this.diaSemana = diaSemana;
-		this.horarioAbertura = horarioAbertura;
-		this.horarioFechamento = horarioFechamento;
-		this.limiteJogadores = limiteJogadores;
-		this.interna = interna;
-	}
+    public QuadraDTO(@NotBlank @Size(min = 3) String nome, boolean status,
+                     @NotNull LocalTime horarioAbertura, @NotNull LocalTime horarioFechamento, Integer limiteJogadores,
+                     boolean interna) {
+        this.nome = nome;
+        this.status = status;
+        this.horarioAbertura = horarioAbertura;
+        this.horarioFechamento = horarioFechamento;
+        this.limiteJogadores = limiteJogadores;
+        this.interna = interna;
+    }
 
-	public String getNome() {
-		return nome;
-	}
+    public String getNome() {
+        return nome;
+    }
 
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
 
-	public String getStatus() {
-		return status;
-	}
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public LocalTime getHorarioAbertura() {
+        return horarioAbertura;
+    }
 
-	public Integer getDiaSemana() {
-		return diaSemana;
-	}
+    public void setHorarioAbertura(LocalTime horarioAbertura) {
+        this.horarioAbertura = horarioAbertura;
+    }
 
-	public void setDiaSemana(Integer diaSemana) {
-		this.diaSemana = diaSemana;
-	}
+    public LocalTime getHorarioFechamento() {
+        return horarioFechamento;
+    }
 
-	public LocalTime getHorarioAbertura() {
-		return horarioAbertura;
-	}
+    public void setHorarioFechamento(LocalTime horarioFechamento) {
+        this.horarioFechamento = horarioFechamento;
+    }
 
-	public void setHorarioAbertura(LocalTime horarioAbertura) {
-		this.horarioAbertura = horarioAbertura;
-	}
+    public Integer getLimiteJogadores() {
+        return limiteJogadores;
+    }
 
-	public LocalTime getHorarioFechamento() {
-		return horarioFechamento;
-	}
+    public void setLimiteJogadores(Integer limiteJogadores) {
+        this.limiteJogadores = limiteJogadores;
+    }
 
-	public void setHorarioFechamento(LocalTime horarioFechamento) {
-		this.horarioFechamento = horarioFechamento;
-	}
+    public boolean isInterna() {
+        return interna;
+    }
 
-	public Integer getLimiteJogadores() {
-		return limiteJogadores;
-	}
+    public void setInterna(boolean interna) {
+        this.interna = interna;
+    }
 
-	public void setLimiteJogadores(Integer limiteJogadores) {
-		this.limiteJogadores = limiteJogadores;
-	}
+    public boolean isStatus(){
+        return status;
+    }
 
-	public boolean isInterna() {
-		return interna;
-	}
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
 
-	public void setInterna(boolean interna) {
-		this.interna = interna;
-	}
+    public static QuadraDTO fromEntity(QuadraEntity entity) {
+        return new QuadraDTO(
+                entity.getNome(),
+                entity.isStatus(),
+                entity.getHorarioAbertura(),
+                entity.getHorarioFechamento(),
+                entity.getLimiteJogadores(),
+                entity.isInterna()
+        );
+    }
 
-    
-    
+    public QuadraEntity toEntity() {
+        QuadraEntity entity = new QuadraEntity();
+        entity.setNome(this.getNome());
+        entity.setStatus(this.isStatus());
+        entity.setHorarioAbertura(this.getHorarioAbertura());
+        entity.setHorarioFechamento(this.getHorarioFechamento());
+        entity.setLimiteJogadores(this.getLimiteJogadores());
+        entity.setInterna(this.isInterna());
+        return entity;
+    }
+
+
+
 }

@@ -16,11 +16,7 @@ public class QuadraEntity {
     @Column(unique = true, nullable = false)
     private String nome;
 
-    @Column(nullable = false)
-    private String status;
-
-    @Column(name = "dia_semana", nullable = false)
-    private Integer diaSemana;
+    private boolean status;
 
     @Column(name = "horario_abertura", nullable = false)
     private LocalTime horarioAbertura;
@@ -33,22 +29,20 @@ public class QuadraEntity {
 
     private boolean interna;
 
-    //@OneToMany(mappedBy = "quadra")
-    //private List<ReservaEntity> reservas;
+    @OneToMany(mappedBy = "quadra")
+    private List<ReservaEntity> reservas;
 
 
     public QuadraEntity() {
     }
 
-    public QuadraEntity(String nome, String status, Integer diaSemana, LocalTime horarioAbertura, LocalTime horarioFechamento, Integer limiteJogadores, boolean interna /*List<ReservaEntity> reservas*/) {
+    public QuadraEntity(String nome, LocalTime horarioAbertura, LocalTime horarioFechamento, Integer limiteJogadores, boolean interna, List<ReservaEntity> reservas) {
         this.nome = nome;
-        this.status = status;
-        this.diaSemana = diaSemana;
         this.horarioAbertura = horarioAbertura;
         this.horarioFechamento = horarioFechamento;
         this.limiteJogadores = limiteJogadores;
         this.interna = interna;
-        /* this.reservas = reservas;*/
+        this.reservas = reservas;
     }
 
     public Integer getId() {
@@ -67,21 +61,6 @@ public class QuadraEntity {
         this.nome = nome;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public Integer getDiaSemana() {
-        return diaSemana;
-    }
-
-    public void setDiaSemana(Integer diaSemana) {
-        this.diaSemana = diaSemana;
-    }
 
     public LocalTime getHorarioAbertura() {
         return horarioAbertura;
@@ -115,11 +94,19 @@ public class QuadraEntity {
         this.interna = interna;
     }
 
-    /* public List<ReservaEntity> getReservas() {
+     public List<ReservaEntity> getReservas() {
         return reservas;
-    } */
+    }
 
-   /* public void setReservas(List<ReservaEntity> reservas) {
+    public void setReservas(List<ReservaEntity> reservas) {
         this.reservas = reservas;
-    } */
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
 }

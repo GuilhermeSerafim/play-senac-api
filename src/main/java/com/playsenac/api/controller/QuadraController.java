@@ -18,34 +18,47 @@ import java.util.List;
 @RequestMapping("/quadras")
 public class QuadraController {
 
-@Autowired
-private QuadraService service;
+    @Autowired
+    private QuadraService service;
 
-@GetMapping
-public List<QuadraDTO> findAll(){
-    return service.findAll();
-}
-
-@GetMapping("/{id}")
-public ResponseEntity<QuadraDTO> findById(@PathVariable Integer id){
-    try {
-        QuadraDTO quadra = service.findById(id);
-        return ResponseEntity.ok(quadra);
-    } catch (EntityNotFoundException e) {
-        return ResponseEntity.notFound().build();
+    @GetMapping
+    public List<QuadraDTO> findAll() {
+        return service.findAll();
     }
-}
 
-@PostMapping
-public ResponseEntity<QuadraDTO> criarQuadra(@RequestBody @Valid QuadraDTO quadraDTO){
-    QuadraDTO quadraDto = service.addNew(quadraDTO);
+    @GetMapping("/{id}")
+    public ResponseEntity<QuadraDTO> findById(@PathVariable Integer id) {
+        try {
+            QuadraDTO quadra = service.findById(id);
+            return ResponseEntity.ok(quadra);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
-    URI location = ServletUriComponentsBuilder
-            .fromCurrentRequest()
-            .path("/{nome}")
-            .buildAndExpand(quadraDto.getNome())
-            .toUri();
-            return ResponseEntity.created(location).build();
-}
+    @PostMapping
+    public ResponseEntity<QuadraDTO> addNew(@RequestBody @Valid QuadraDTO quadraDTO) {
+        QuadraDTO quadraDto = service.addNew(quadraDTO);
+
+        URI location = ServletUriComponentsBuilder.
+                fromCurrentRequest()
+                .path("/{nome}")
+                .buildAndExpand(quadraDto.getNome())
+                .toUri();
+
+        return ResponseEntity.created(location).build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<QuadraDTO> update(@PathVariable Integer id, @RequestBody @Valid QuadraDTO quadraDTO) {
+        QuadraDTO atualizado = service.update(id, quadraDTO);
+        return ResponseEntity.ok(atualizado);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 
 }
