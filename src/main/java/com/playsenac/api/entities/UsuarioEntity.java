@@ -1,36 +1,35 @@
 package com.playsenac.api.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "Usuario")
 public class UsuarioEntity {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_usuario", unique = true)
 	private int id_usuario;
-	
+
 	@Column(name="nome", nullable = false)
 	private String nome;
-	
+
 	@Column(name="email", nullable = false)
 	private String email;
-	
+
 	@Column(name="senha", nullable = false)
 	private String senha;
-	
+
 	@Column(name="telefone")
 	private String telefone;
-	
-	//colocar o relacionamento com a reserva!!!
-	
-	public UsuarioEntity() { }
+
+	@OneToMany(mappedBy = "usuario")
+	private List<ReservaEntity> reservas = new ArrayList<>();
+
+    public UsuarioEntity() {}
 
 	public UsuarioEntity(int id_usuario, String nome, String email, String senha, String telefone) {
 		this.id_usuario = id_usuario;
@@ -40,43 +39,51 @@ public class UsuarioEntity {
 		this.telefone = telefone;
 	}
 
-	public int getId_usuario() {
-		return id_usuario;
-	}
+    public int getId_usuario() {
+        return id_usuario;
+    }
 
-	public void setId_usuario(int id_usuario) {
-		this.id_usuario = id_usuario;
-	}
+    public void setId_usuario(int id_usuario) {
+        this.id_usuario = id_usuario;
+    }
 
-	public String getNome() {
-		return nome;
-	}
+    public String getNome() {
+        return nome;
+    }
 
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public String getSenha() {
-		return senha;
-	}
+    public String getSenha() {
+        return senha;
+    }
 
-	public void setSenha(String senha) {
-		this.senha = senha;
-	}
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
 
-	public String getTelefone() {
-		return telefone;
-	}
+    public String getTelefone() {
+        return telefone;
+    }
 
-	public void setTelefone(String telefone) {
-		this.telefone = telefone;
-	}	
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
+
+    public List<ReservaEntity> getReservas() {
+        return reservas;
+    }
+
+    public void setReservas(List<ReservaEntity> reservas) {
+        this.reservas = reservas;
+    }
 }

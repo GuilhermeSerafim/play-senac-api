@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Table(name = "reserva")
 public class ReservaEntity {
 
-     @Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id_reserva;
 
@@ -21,33 +21,38 @@ public class ReservaEntity {
     @Column(nullable = false)
     private String status;
 
-    @Column(name = "id_usuario", nullable = false)
-    private Integer idUsuario; // mudar depois de implementar classe usuario
+    @ManyToOne
+    @JoinColumn(name = "fk_usuario", nullable = false)
+    private UsuarioEntity usuario;
+
 
     @ManyToOne
-    @JoinColumn(name = "id_quadra", nullable = false)
+    @JoinColumn(name = "fk_quadra", nullable = false)
     private QuadraEntity quadra;
 
-    private Integer qtdConvidados; // mudar depois de implementar classe convidados
+
 
     public ReservaEntity() {
     }
 
-    public ReservaEntity(Integer id_reserva, LocalDateTime dataHoraInicio, LocalDateTime dataHoraFim, String status, Integer idUsuario, QuadraEntity quadra, Integer qtdConvidados) {
+    public ReservaEntity(Integer id_reserva, LocalDateTime dataHoraInicio, LocalDateTime dataHoraFim, String status, UsuarioEntity usuario, QuadraEntity quadra) {
         this.id_reserva = id_reserva;
         this.dataHoraInicio = dataHoraInicio;
         this.dataHoraFim = dataHoraFim;
         this.status = status;
-        this.idUsuario = idUsuario;
+        this.usuario = usuario;
         this.quadra = quadra;
-        this.qtdConvidados = qtdConvidados;
     }
 
     public Integer getIdreserva() {
         return id_reserva;
     }
 
-    public void setIdreserva(Integer id_reserva) {
+    public Integer getId_reserva() {
+        return id_reserva;
+    }
+
+    public void setId_reserva(Integer id_reserva) {
         this.id_reserva = id_reserva;
     }
 
@@ -75,12 +80,12 @@ public class ReservaEntity {
         this.status = status;
     }
 
-    public Integer getIdUsuario() {
-        return idUsuario;
+    public UsuarioEntity getUsuario() {
+        return usuario;
     }
 
-    public void setIdUsuario(Integer idUsuario) {
-        this.idUsuario = idUsuario;
+    public void setUsuario(UsuarioEntity usuario) {
+        this.usuario = usuario;
     }
 
     public QuadraEntity getQuadra() {
@@ -91,11 +96,4 @@ public class ReservaEntity {
         this.quadra = quadra;
     }
 
-    public Integer getQtdConvidados() {
-        return qtdConvidados;
-    }
-
-    public void setQtdConvidados(Integer qtdConvidados) {
-        this.qtdConvidados = qtdConvidados;
-    }
 }
