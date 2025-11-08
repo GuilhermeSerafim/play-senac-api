@@ -26,6 +26,9 @@ public class UsuarioEntity {
 	@Column(name="telefone")
 	private String telefone;
 
+    @Column(name="fk_role")
+    private int fk_role;
+
 	@OneToMany(mappedBy = "usuario")
 	private List<ReservaEntity> reservas = new ArrayList<>();
 
@@ -77,6 +80,13 @@ public class UsuarioEntity {
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
+    }
+
+    public int getFkRole() {
+        return fk_role;
+    }
+    public void setFkRole(int fk_role) {
+        this.fk_role = fk_role;
     }
 
     public List<ReservaEntity> getReservas() {
