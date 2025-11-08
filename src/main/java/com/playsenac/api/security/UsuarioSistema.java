@@ -1,7 +1,6 @@
 package com.playsenac.api.security;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -24,6 +23,9 @@ public class UsuarioSistema implements UserDetails{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id_usuario;
 
+	@Column(name = "nome")
+	private String nome;
+	
 	@Column(name = "email", unique = true)
 	private String email;
 	
@@ -35,6 +37,15 @@ public class UsuarioSistema implements UserDetails{
 	private Role role;
 	
 	public UsuarioSistema() { }
+	
+	
+
+	public UsuarioSistema(String nome, String email, String senha, Role role) {
+		this.nome = nome;
+		this.email = email;
+		this.senha = senha;
+		this.role = role;
+	}
 
 	public int getId_usuario() {
 		return id_usuario;
@@ -66,6 +77,14 @@ public class UsuarioSistema implements UserDetails{
 
 	public void setSenha(String senha) {
 		this.senha = senha;
+	}
+	
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
 
 	@Override
