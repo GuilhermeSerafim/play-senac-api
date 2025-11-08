@@ -11,12 +11,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.playsenac.api.security.UsuarioSistema;
+import com.playsenac.api.service.JwtService;
 
 @RestController
 public class LoginController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+    
+    @Autowired
+    private JwtService service;
 
     @PostMapping("/login")
     public ResponseEntity<RespostaLogin> fazerLogin(@RequestBody Credencial credencial) {
@@ -28,7 +32,8 @@ public class LoginController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         UsuarioSistema usuario = (UsuarioSistema) auth.getPrincipal();
-        return ResponseEntity.ok().body(new RespostaLogin(usuario.getEmail(), "token1234"));
+        String jwt = service.gerarTokenJwt(usuario);
+        return ResponseEntity.ok().body(new RespostaLogin(usuario.getEmail(), jwt));
     }
 
     public record Credencial(String username, String senha) {
