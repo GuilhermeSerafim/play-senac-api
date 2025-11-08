@@ -3,7 +3,7 @@ package com.playsenac.api.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.playsenac.api.entities.QuadraEntity;
 import com.playsenac.api.entities.ReservaEntity;
-import com.playsenac.api.entities.usuarioEntity;
+import com.playsenac.api.entities.UsuarioEntity;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
@@ -122,7 +122,7 @@ public class ReservaDTO {
         );
     }
 
-    public ReservaEntity toEntity(usuarioEntity usuario, QuadraEntity quadra){
+    public ReservaEntity toEntity(UsuarioEntity usuario, QuadraEntity quadra){
         ReservaEntity entity = new ReservaEntity();
         entity.setId_reserva(this.id);
         entity.setDataHoraInicio(this.dataHoraInicio);

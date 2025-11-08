@@ -4,6 +4,7 @@ import com.playsenac.api.dto.QuadraDTO;
 
 
 import java.util.List;
+import java.util.Optional;
 
 public interface QuadraService {
     List<QuadraDTO> findAll();
@@ -12,7 +13,8 @@ public interface QuadraService {
 
     QuadraDTO addNew(QuadraDTO dto);
 
-    QuadraDTO update(Integer id, QuadraDTO dto);
+   QuadraDTO update(Integer id, QuadraDTO dto);
+
 
     void delete(Integer id);
 }

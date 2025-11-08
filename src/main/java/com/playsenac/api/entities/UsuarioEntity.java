@@ -7,7 +7,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "Usuario")
-public class usuarioEntity {
+public class UsuarioEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,12 +26,15 @@ public class usuarioEntity {
 	@Column(name="telefone")
 	private String telefone;
 
+    @Column(name="fk_role")
+    private int fk_role;
+
 	@OneToMany(mappedBy = "usuario")
 	private List<ReservaEntity> reservas = new ArrayList<>();
 
-    public usuarioEntity() {}
+    public UsuarioEntity() {}
 
-	public usuarioEntity(int id_usuario, String nome, String email, String senha, String telefone) {
+	public UsuarioEntity(int id_usuario, String nome, String email, String senha, String telefone) {
 		this.id_usuario = id_usuario;
 		this.nome = nome;
 		this.email = email;
@@ -77,6 +80,13 @@ public class usuarioEntity {
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
+    }
+
+    public int getFkRole() {
+        return fk_role;
+    }
+    public void setFkRole(int fk_role) {
+        this.fk_role = fk_role;
     }
 
     public List<ReservaEntity> getReservas() {

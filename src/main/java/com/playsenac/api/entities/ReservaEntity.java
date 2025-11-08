@@ -23,7 +23,7 @@ public class ReservaEntity {
 
     @ManyToOne
     @JoinColumn(name = "fk_usuario", nullable = false)
-    private usuarioEntity usuario;
+    private UsuarioEntity usuario;
 
 
     @ManyToOne
@@ -35,7 +35,7 @@ public class ReservaEntity {
     public ReservaEntity() {
     }
 
-    public ReservaEntity(Integer id_reserva, LocalDateTime dataHoraInicio, LocalDateTime dataHoraFim, String status, usuarioEntity usuario, QuadraEntity quadra, int qtdConvidados) {
+    public ReservaEntity(Integer id_reserva, LocalDateTime dataHoraInicio, LocalDateTime dataHoraFim, String status, UsuarioEntity usuario, QuadraEntity quadra, int qtdConvidados) {
         this.id_reserva = id_reserva;
         this.dataHoraInicio = dataHoraInicio;
         this.dataHoraFim = dataHoraFim;
@@ -81,11 +81,11 @@ public class ReservaEntity {
         this.status = status;
     }
 
-    public usuarioEntity getUsuario() {
+    public UsuarioEntity getUsuario() {
         return usuario;
     }
 
-    public void setUsuario(usuarioEntity usuario) {
+    public void setUsuario(UsuarioEntity usuario) {
         this.usuario = usuario;
     }
 

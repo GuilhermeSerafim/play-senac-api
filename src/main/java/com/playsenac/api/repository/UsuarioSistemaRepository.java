@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.playsenac.api.security.UsuarioSistema;
 
-public interface usuarioRepository extends JpaRepository<UsuarioSistema, Integer>{
+public interface UsuarioSistemaRepository extends JpaRepository<UsuarioSistema, Integer>{
 	Optional<UsuarioSistema> findByEmail(String email);
 }
