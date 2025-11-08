@@ -33,7 +33,7 @@ public class ReservaDTO {
     public ReservaDTO() {
     }
 
-    public ReservaDTO(Integer idReserva, LocalDateTime dataHoraInicio, LocalDateTime dataHoraFim, String status, Integer idUsuario, Integer idQuadra, String nomeQuadra, Integer qtdConvidados) {
+    public ReservaDTO(Integer idReserva, LocalDateTime dataHoraInicio, LocalDateTime dataHoraFim, String status, Integer idUsuario, Integer idQuadra, String nomeQuadra) {
         this.id = idReserva;
         this.dataHoraInicio = dataHoraInicio;
         this.dataHoraFim = dataHoraFim;
@@ -41,7 +41,6 @@ public class ReservaDTO {
         this.idUsuario = idUsuario;
         this.idQuadra = idQuadra;
         this.nomeQuadra = nomeQuadra;
-        this.qtdConvidados = qtdConvidados;
     }
 
 
@@ -117,8 +116,7 @@ public class ReservaDTO {
                 entity.getStatus(),
                 entity.getUsuario() != null ? entity.getUsuario().getId_usuario() : null,
                 entity.getQuadra() != null ? entity.getQuadra().getId() : null,
-                entity.getQuadra() != null ? entity.getQuadra().getNome() : null,
-                entity.getQtdConvidados()
+                entity.getQuadra() != null ? entity.getQuadra().getNome() : null
         );
     }
 
@@ -130,7 +128,6 @@ public class ReservaDTO {
         entity.setStatus(this.status);
         entity.setUsuario(usuario);
         entity.setQuadra(quadra);
-        entity.setQtdConvidados(this.qtdConvidados);
         return entity;
     }
 
