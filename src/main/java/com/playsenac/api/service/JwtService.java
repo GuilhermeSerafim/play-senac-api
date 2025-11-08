@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.security.oauth2.jwt.JwtEncodingException;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
+import org.springframework.security.oauth2.jwt.Jwt;
 
 import com.playsenac.api.security.Role;
 import com.playsenac.api.security.UsuarioSistema;
@@ -45,14 +46,14 @@ public class JwtService {
 		
 		JwsHeader jwsHeader = JwsHeader.with(MacAlgorithm.HS256).build();
 		try {
-            org.springframework.security.oauth2.jwt.Jwt jwt = this.encode.encode(JwtEncoderParameters.from(jwsHeader, claims));
+            Jwt jwt = this.encode.encode(JwtEncoderParameters.from(jwsHeader, claims));
             return ((OAuth2Token) jwt).getTokenValue();
 		} catch (JwtEncodingException err) {
 			throw new RuntimeException("Erro ao gerar token JWT", err);
 		}
 	}
 	
-	public org.springframework.security.oauth2.jwt.Jwt decodificarToken(String token) throws JwtException {
+	public Jwt decodificarToken(String token) throws JwtException {
 		try {
 			return this.decode.decode(token);
 		} catch (BadJwtException e) {
@@ -64,7 +65,7 @@ public class JwtService {
 	
 	public UsuarioSistema obterUsuarioDoToken(String token) {
 		try {
-			org.springframework.security.oauth2.jwt.Jwt jwt = decodificarToken(token);
+			Jwt jwt = decodificarToken(token);
 			final String nome = jwt.getSubject();
 			
 			Role permissao = new Role();
