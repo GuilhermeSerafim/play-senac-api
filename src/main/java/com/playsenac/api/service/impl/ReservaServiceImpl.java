@@ -59,7 +59,6 @@ public class ReservaServiceImpl implements ReservaService {
         entity.setStatus("ATIVA");
         entity.setUsuario(usuarioEntity);
         entity.setQuadra(quadraEntity);
-        entity.setQtdConvidados(dto.getQtdConvidados());
         ReservaEntity savedEntity = reservaRepository.save(entity);
         return ReservaDTO.fromEntity(savedEntity);
     }

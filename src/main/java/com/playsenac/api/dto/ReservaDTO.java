@@ -26,21 +26,16 @@ public class ReservaDTO {
     @NotNull(message = "ID da quadra é obrigatório")
     private Integer idQuadra;
 
-    private String nomeQuadra;
-
-    private Integer qtdConvidados;
-
     public ReservaDTO() {
     }
 
-    public ReservaDTO(Integer idReserva, LocalDateTime dataHoraInicio, LocalDateTime dataHoraFim, String status, Integer idUsuario, Integer idQuadra, String nomeQuadra) {
+    public ReservaDTO(Integer idReserva, LocalDateTime dataHoraInicio, LocalDateTime dataHoraFim, String status, Integer idUsuario, Integer idQuadra) {
         this.id = idReserva;
         this.dataHoraInicio = dataHoraInicio;
         this.dataHoraFim = dataHoraFim;
         this.status = status;
         this.idUsuario = idUsuario;
         this.idQuadra = idQuadra;
-        this.nomeQuadra = nomeQuadra;
     }
 
 
@@ -92,22 +87,6 @@ public class ReservaDTO {
         this.idQuadra = idQuadra;
     }
 
-    public String getNomeQuadra() {
-        return nomeQuadra;
-    }
-
-    public void setNomeQuadra(String nomeQuadra) {
-        this.nomeQuadra = nomeQuadra;
-    }
-
-    public Integer getQtdConvidados() {
-        return qtdConvidados;
-    }
-
-    public void setQtdConvidados(Integer qtdConvidados) {
-        this.qtdConvidados = qtdConvidados;
-    }
-
     public static ReservaDTO fromEntity(ReservaEntity entity){
         return new ReservaDTO(
                 entity.getId_reserva(),
@@ -115,8 +94,7 @@ public class ReservaDTO {
                 entity.getDataHoraFim(),
                 entity.getStatus(),
                 entity.getUsuario() != null ? entity.getUsuario().getId_usuario() : null,
-                entity.getQuadra() != null ? entity.getQuadra().getId() : null,
-                entity.getQuadra() != null ? entity.getQuadra().getNome() : null
+                entity.getQuadra() != null ? entity.getQuadra().getId() : null
         );
     }
 
