@@ -2,7 +2,6 @@ package com.playsenac.api.controller;
 
 import com.playsenac.api.dto.QuadraDTO;
 import com.playsenac.api.service.QuadraService;
-import com.playsenac.api.service.impl.QuadraServiceImpl;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.persistence.EntityNotFoundException;
