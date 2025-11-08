@@ -3,6 +3,8 @@ package com.playsenac.api.controller;
 import com.playsenac.api.dto.QuadraDTO;
 import com.playsenac.api.dto.ReservaDTO;
 import com.playsenac.api.service.ReservaService;
+
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import java.util.List;
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/reservas")
+@SecurityRequirement(name = "bearer-jwt")
 public class ReservaController {
 
     @Autowired
