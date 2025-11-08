@@ -1,11 +1,13 @@
 package com.playsenac.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.playsenac.api.entities.QuadraEntity;
+import com.playsenac.api.entities.ReservaEntity;
+import com.playsenac.api.entities.usuarioEntity;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 
-// Confirmar com Tsuda na terça a necessidade de utilizar dois DTOs (Response e Create)
 @JsonInclude(JsonInclude.Include.NON_NULL) // para não aparecer nenhum campo NULL na resposta
 public class ReservaDTO {
      private Integer id;
@@ -41,6 +43,7 @@ public class ReservaDTO {
         this.nomeQuadra = nomeQuadra;
         this.qtdConvidados = qtdConvidados;
     }
+
 
     public Integer getId() {
         return id;
@@ -105,4 +108,30 @@ public class ReservaDTO {
     public void setQtdConvidados(Integer qtdConvidados) {
         this.qtdConvidados = qtdConvidados;
     }
+
+    public static ReservaDTO fromEntity(ReservaEntity entity){
+        return new ReservaDTO(
+                entity.getId_reserva(),
+                entity.getDataHoraInicio(),
+                entity.getDataHoraFim(),
+                entity.getStatus(),
+                entity.getUsuario() != null ? entity.getUsuario().getId_usuario() : null,
+                entity.getQuadra() != null ? entity.getQuadra().getId() : null,
+                entity.getQuadra() != null ? entity.getQuadra().getNome() : null,
+                entity.getQtdConvidados()
+        );
+    }
+
+    public ReservaEntity toEntity(usuarioEntity usuario, QuadraEntity quadra){
+        ReservaEntity entity = new ReservaEntity();
+        entity.setId_reserva(this.id);
+        entity.setDataHoraInicio(this.dataHoraInicio);
+        entity.setDataHoraFim(this.dataHoraFim);
+        entity.setStatus(this.status);
+        entity.setUsuario(usuario);
+        entity.setQuadra(quadra);
+        entity.setQtdConvidados(this.qtdConvidados);
+        return entity;
+    }
+
 }

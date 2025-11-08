@@ -30,18 +30,19 @@ public class ReservaEntity {
     @JoinColumn(name = "fk_quadra", nullable = false)
     private QuadraEntity quadra;
 
-
+    private Integer qtdConvidados;
 
     public ReservaEntity() {
     }
 
-    public ReservaEntity(Integer id_reserva, LocalDateTime dataHoraInicio, LocalDateTime dataHoraFim, String status, usuarioEntity usuario, QuadraEntity quadra) {
+    public ReservaEntity(Integer id_reserva, LocalDateTime dataHoraInicio, LocalDateTime dataHoraFim, String status, usuarioEntity usuario, QuadraEntity quadra, int qtdConvidados) {
         this.id_reserva = id_reserva;
         this.dataHoraInicio = dataHoraInicio;
         this.dataHoraFim = dataHoraFim;
         this.status = status;
         this.usuario = usuario;
         this.quadra = quadra;
+        this.qtdConvidados = qtdConvidados;
     }
 
     public Integer getIdreserva() {
@@ -96,4 +97,11 @@ public class ReservaEntity {
         this.quadra = quadra;
     }
 
+    public Integer getQtdConvidados() {
+        return qtdConvidados;
+    }
+
+    public void setQtdConvidados(Integer qtdConvidados) {
+        this.qtdConvidados = qtdConvidados;
+    }
 }
