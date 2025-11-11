@@ -57,10 +57,9 @@ public class SecurityConfig {
 				.headers(headers -> headers.frameOptions(fo -> fo.sameOrigin()))
 				.formLogin(formLogin -> formLogin.disable())
 				.authorizeHttpRequests(authorize -> authorize
-						.requestMatchers("/login", "/login.html", "/me.html",
-                                "/h2-console/**",
-                                "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**")
+						.requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**")
 						.permitAll()
+						.requestMatchers("/usuarios").permitAll()
 						.requestMatchers("/admin").hasAuthority("ADMIN")
 						.anyRequest().authenticated())
 				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
