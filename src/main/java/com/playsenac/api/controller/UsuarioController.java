@@ -22,12 +22,6 @@ public class UsuarioController {
 
     @PostMapping
     public ResponseEntity<UsuarioDTO> addNew(@RequestBody UsuarioDTO dto) {
-//        UsuarioEntity novoUsuario = new UsuarioEntity();
-//
-//        novoUsuario.setNome(dto.getNome());
-//        novoUsuario.setEmail(dto.getEmail());
-//        novoUsuario.setSenha(dto.getSenha());
-//        novoUsuario.setTelefone(dto.getTelefone());
 
         UsuarioDTO u = service.addNew(dto);
         URI location = ServletUriComponentsBuilder
