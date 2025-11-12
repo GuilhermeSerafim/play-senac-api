@@ -26,6 +26,7 @@ public class QuadraController {
         return service.findAll();
     }
 
+
     @GetMapping("/{id}")
     public ResponseEntity<QuadraDTO> findById(@PathVariable Integer id) {
         try {
