@@ -3,6 +3,7 @@ package com.playsenac.api.controller;
 import java.net.URI;
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,18 +21,19 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/bloqueios")
+@SecurityRequirement(name = "bearer-jwt")
 public class BloqueioController {
 
     @Autowired
     private BloqueioService service;
-    
+
     @GetMapping
     public List<BloqueioDTO> findAll() {
         return service.findAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BloqueioDTO> findById (@PathVariable Integer id) {
+    public ResponseEntity<BloqueioDTO> findById(@PathVariable Integer id) {
         try {
             BloqueioDTO bloqueio = service.findById(id);
             return ResponseEntity.ok(bloqueio);
@@ -39,7 +41,7 @@ public class BloqueioController {
             return ResponseEntity.notFound().build();
         }
     }
-    
+
     @PostMapping
     public ResponseEntity<BloqueioDTO> addNew(@RequestBody @Valid BloqueioDTO bloqueioDTO) {
         BloqueioDTO dtoSalvo = service.addNew(bloqueioDTO);
@@ -47,6 +49,6 @@ public class BloqueioController {
         URI location = URI.create("/bloqueios/" + dtoSalvo.getId());
 
         return ResponseEntity.created(location).body(dtoSalvo);
-    } 
+    }
 
 }
