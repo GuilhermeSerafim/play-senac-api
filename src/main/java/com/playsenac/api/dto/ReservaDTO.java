@@ -1,11 +1,13 @@
 package com.playsenac.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.playsenac.api.entities.QuadraEntity;
+import com.playsenac.api.entities.ReservaEntity;
+import com.playsenac.api.entities.UsuarioEntity;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 
-// Confirmar com Tsuda na terça a necessidade de utilizar dois DTOs (Response e Create)
 @JsonInclude(JsonInclude.Include.NON_NULL) // para não aparecer nenhum campo NULL na resposta
 public class ReservaDTO {
      private Integer id;
@@ -24,23 +26,18 @@ public class ReservaDTO {
     @NotNull(message = "ID da quadra é obrigatório")
     private Integer idQuadra;
 
-    private String nomeQuadra;
-
-    private Integer qtdConvidados;
-
     public ReservaDTO() {
     }
 
-    public ReservaDTO(Integer idReserva, LocalDateTime dataHoraInicio, LocalDateTime dataHoraFim, String status, Integer idUsuario, Integer idQuadra, String nomeQuadra, Integer qtdConvidados) {
+    public ReservaDTO(Integer idReserva, LocalDateTime dataHoraInicio, LocalDateTime dataHoraFim, String status, Integer idUsuario, Integer idQuadra) {
         this.id = idReserva;
         this.dataHoraInicio = dataHoraInicio;
         this.dataHoraFim = dataHoraFim;
         this.status = status;
         this.idUsuario = idUsuario;
         this.idQuadra = idQuadra;
-        this.nomeQuadra = nomeQuadra;
-        this.qtdConvidados = qtdConvidados;
     }
+
 
     public Integer getId() {
         return id;
@@ -90,19 +87,26 @@ public class ReservaDTO {
         this.idQuadra = idQuadra;
     }
 
-    public String getNomeQuadra() {
-        return nomeQuadra;
+    public static ReservaDTO fromEntity(ReservaEntity entity){
+        return new ReservaDTO(
+                entity.getId_reserva(),
+                entity.getDataHoraInicio(),
+                entity.getDataHoraFim(),
+                entity.getStatus(),
+                entity.getUsuario() != null ? entity.getUsuario().getId_usuario() : null,
+                entity.getQuadra() != null ? entity.getQuadra().getId() : null
+        );
     }
 
-    public void setNomeQuadra(String nomeQuadra) {
-        this.nomeQuadra = nomeQuadra;
+    public ReservaEntity toEntity(UsuarioEntity usuario, QuadraEntity quadra){
+        ReservaEntity entity = new ReservaEntity();
+        entity.setId_reserva(this.id);
+        entity.setDataHoraInicio(this.dataHoraInicio);
+        entity.setDataHoraFim(this.dataHoraFim);
+        entity.setStatus(this.status);
+        entity.setUsuario(usuario);
+        entity.setQuadra(quadra);
+        return entity;
     }
 
-    public Integer getQtdConvidados() {
-        return qtdConvidados;
-    }
-
-    public void setQtdConvidados(Integer qtdConvidados) {
-        this.qtdConvidados = qtdConvidados;
-    }
 }
