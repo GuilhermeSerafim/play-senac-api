@@ -58,7 +58,7 @@ public class SecurityConfig {
 				.formLogin(formLogin -> formLogin.disable())
 				.authorizeHttpRequests(authorize -> authorize
 						.requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-						.requestMatchers("/login").permitAll()
+						.requestMatchers("/usuarios/cadastro").permitAll()
 						.requestMatchers("/admin").hasAuthority("ADMIN")
 						.anyRequest().authenticated())
 				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
