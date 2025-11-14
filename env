@@ -1,4 +1,0 @@
-DB_URL=jdbc:mysql://playsenac-bd.ckjm0864sweu.us-east-1.rds.amazonaws.com:3306/playsenac?useSSL=true
-DB_USER=dev
-DB_PASSWORD=devS3nac
-TOKEN_CHAVE=cH@v353cr37@S
