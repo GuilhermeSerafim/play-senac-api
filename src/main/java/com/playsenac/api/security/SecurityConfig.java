@@ -38,7 +38,7 @@ public class SecurityConfig {
 		/* na linha 34 deve ser trocada para passwordEncoder.setDefaultPasswordEncoderForMatches(bcryptEnc).
 		 * para realizar a validação da senha com criptografia, atualmente compara texto simples como .equals;
 		 * */
-		passwordEncoder.setDefaultPasswordEncoderForMatches(NoOpPasswordEncoder.getInstance());
+		passwordEncoder.setDefaultPasswordEncoderForMatches(bcryptEnc);
 		return passwordEncoder;
 	}
 	
@@ -59,6 +59,7 @@ public class SecurityConfig {
 				.authorizeHttpRequests(authorize -> authorize
 						.requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
 						.requestMatchers("/usuarios/cadastro").permitAll()
+						.requestMatchers("/login").permitAll()
 						.requestMatchers("/admin").hasAuthority("ADMIN")
 						.anyRequest().authenticated())
 				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
