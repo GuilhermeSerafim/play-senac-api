@@ -20,7 +20,7 @@ public class UsuarioController {
     @Autowired
     private UsuarioService service;
 
-    @PostMapping
+    @PostMapping("/cadastro")
     public ResponseEntity<UsuarioDTO> addNew(@RequestBody UsuarioDTO dto) {
 
         UsuarioDTO u = service.addNew(dto);
