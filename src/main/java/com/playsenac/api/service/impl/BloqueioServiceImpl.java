@@ -1,16 +1,12 @@
 package com.playsenac.api.service.impl;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import javax.swing.text.html.parser.Entity;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.playsenac.api.dto.BloqueioDTO;
-import com.playsenac.api.dto.QuadraDTO;
 import com.playsenac.api.entities.BloqueioEntity;
 import com.playsenac.api.entities.QuadraEntity;
 import com.playsenac.api.entities.ReservaEntity;
@@ -18,7 +14,6 @@ import com.playsenac.api.repository.BloqueioRepository;
 import com.playsenac.api.repository.QuadraRepository;
 import com.playsenac.api.repository.ReservaRepository;
 import com.playsenac.api.service.BloqueioService;
-import com.playsenac.api.service.QuadraService;
 
 import jakarta.persistence.EntityNotFoundException;
 
