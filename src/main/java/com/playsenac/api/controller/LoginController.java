@@ -28,7 +28,7 @@ public class LoginController {
     public ResponseEntity<RespostaLogin> fazerLogin(@RequestBody Credencial credencial) {
         Authentication auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        credencial.username(),
+                        credencial.email(),
                         credencial.senha()));
         if (auth == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -38,9 +38,9 @@ public class LoginController {
         return ResponseEntity.ok().body(new RespostaLogin(usuario.getEmail(), jwt));
     }
 
-    public record Credencial(String username, String senha) {
+    public record Credencial(String email, String senha) {
     }
 
-    public record RespostaLogin(String nome, String token) {
+    public record RespostaLogin(String email, String token) {
     }
 }

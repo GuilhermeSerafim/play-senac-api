@@ -4,7 +4,6 @@ import com.playsenac.api.dto.QuadraDTO;
 
 
 import java.util.List;
-import java.util.Optional;
 
 public interface QuadraService {
     List<QuadraDTO> findAll();
