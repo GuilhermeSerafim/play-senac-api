@@ -23,7 +23,7 @@ public class QuadraDTO {
     private Integer limiteJogadores;
 
     private boolean interna;
-
+    
     public QuadraDTO(@NotBlank @Size(min = 3) String nome, boolean status,
                      @NotNull LocalTime horarioAbertura, @NotNull LocalTime horarioFechamento, Integer limiteJogadores,
                      boolean interna) {
