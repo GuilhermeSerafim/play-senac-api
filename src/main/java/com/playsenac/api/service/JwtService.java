@@ -29,7 +29,7 @@ public class JwtService {
 	@Autowired
 	private JwtDecoder decode;
 	
-	private int tempoExpiracao = 10;
+	private int tempoExpiracao = 120;
 	
 	public String gerarTokenJwt(UsuarioSistema usuario) {
 		Instant agora = Instant.now();
