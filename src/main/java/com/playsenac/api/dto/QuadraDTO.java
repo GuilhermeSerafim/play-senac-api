@@ -1,13 +1,15 @@
 package com.playsenac.api.dto;
 
-import com.playsenac.api.entities.QuadraEntity;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalTime;
+import java.util.List;
 
 public class QuadraDTO {
 
+	private int id;
+	
     @NotBlank
     @Size(min = 3)
     private String nome;
@@ -23,18 +25,37 @@ public class QuadraDTO {
     private Integer limiteJogadores;
 
     private boolean interna;
+    
+    private List<Integer> diasSemana;
 
-    public QuadraDTO(@NotBlank @Size(min = 3) String nome, boolean status,
-                     @NotNull LocalTime horarioAbertura, @NotNull LocalTime horarioFechamento, Integer limiteJogadores,
-                     boolean interna) {
-        this.nome = nome;
-        this.status = status;
-        this.horarioAbertura = horarioAbertura;
-        this.horarioFechamento = horarioFechamento;
-        this.limiteJogadores = limiteJogadores;
-        this.interna = interna;
-    }
+//    public QuadraDTO(@NotBlank @Size(min = 3) String nome, boolean status,
+//                     @NotNull LocalTime horarioAbertura, @NotNull LocalTime horarioFechamento, Integer limiteJogadores,
+//                     boolean interna, List<Integer> diasSemana) {
+//        this.nome = nome;
+//        this.status = status;
+//        this.horarioAbertura = horarioAbertura;
+//        this.horarioFechamento = horarioFechamento;
+//        this.limiteJogadores = limiteJogadores;
+//        this.interna = interna;
+//        this.diasSemana = diasSemana;
+//    }
 
+	public QuadraDTO(Integer id, String nome, boolean status, Integer limiteJogadores, boolean interna) {
+		this.id = id;
+		this.nome = nome;
+	    this.status = status;
+	    this.limiteJogadores = limiteJogadores;
+	    this.interna = interna;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+    
     public String getNome() {
         return nome;
     }
@@ -84,28 +105,11 @@ public class QuadraDTO {
         this.status = status;
     }
 
-    public static QuadraDTO fromEntity(QuadraEntity entity) {
-        return new QuadraDTO(
-                entity.getNome(),
-                entity.isStatus(),
-                entity.getHorarioAbertura(),
-                entity.getHorarioFechamento(),
-                entity.getLimiteJogadores(),
-                entity.isInterna()
-        );
-    }
+	public List<Integer> getDiasSemana() {
+		return diasSemana;
+	}
 
-    public QuadraEntity toEntity() {
-        QuadraEntity entity = new QuadraEntity();
-        entity.setNome(this.getNome());
-        entity.setStatus(this.isStatus());
-        entity.setHorarioAbertura(this.getHorarioAbertura());
-        entity.setHorarioFechamento(this.getHorarioFechamento());
-        entity.setLimiteJogadores(this.getLimiteJogadores());
-        entity.setInterna(this.isInterna());
-        return entity;
-    }
-
-
-
+	public void setDiasSemana(List<Integer> diasSemana) {
+		this.diasSemana = diasSemana;
+	}
 }
