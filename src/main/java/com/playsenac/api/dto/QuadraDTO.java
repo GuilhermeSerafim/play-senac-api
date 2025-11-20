@@ -28,17 +28,17 @@ public class QuadraDTO {
     
     private List<Integer> diasSemana;
 
-//    public QuadraDTO(@NotBlank @Size(min = 3) String nome, boolean status,
-//                     @NotNull LocalTime horarioAbertura, @NotNull LocalTime horarioFechamento, Integer limiteJogadores,
-//                     boolean interna, List<Integer> diasSemana) {
-//        this.nome = nome;
-//        this.status = status;
-//        this.horarioAbertura = horarioAbertura;
-//        this.horarioFechamento = horarioFechamento;
-//        this.limiteJogadores = limiteJogadores;
-//        this.interna = interna;
-//        this.diasSemana = diasSemana;
-//    }
+    public QuadraDTO(@NotBlank @Size(min = 3) String nome, boolean status,
+                     @NotNull LocalTime horarioAbertura, @NotNull LocalTime horarioFechamento, Integer limiteJogadores,
+                     boolean interna, List<Integer> diasSemana) {
+        this.nome = nome;
+        this.status = status;
+        this.horarioAbertura = horarioAbertura;
+        this.horarioFechamento = horarioFechamento;
+        this.limiteJogadores = limiteJogadores;
+        this.interna = interna;
+        this.diasSemana = diasSemana;
+    }
 
 	public QuadraDTO(Integer id, String nome, boolean status, Integer limiteJogadores, boolean interna) {
 		this.id = id;
