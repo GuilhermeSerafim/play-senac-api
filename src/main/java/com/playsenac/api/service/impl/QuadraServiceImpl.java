@@ -11,99 +11,109 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
-
 
 @Service
 public class QuadraServiceImpl implements QuadraService {
 
-	
-    @Autowired
-    private QuadraRepository quadraRepository;
-    
-    @Autowired 
-    private DisponibilidadeRepository disponibilidadeRepository;
-    
-    public QuadraEntity toEntity(QuadraDTO dto) {
-    	QuadraEntity entity = new QuadraEntity();
-    	entity.setNome(dto.getNome());
-    	entity.setStatus(dto.isStatus());
-    	entity.setLimiteJogadores(dto.getLimiteJogadores());
-    	entity.setInterna(dto.isInterna());
-    	return entity;
-    }
-    
-    public QuadraDTO toDto(QuadraEntity entity) {
-    	
-    	List<Integer> dias = entity.getDisponibilidades().stream()
-                .map(dispo -> dispo.getDia())
-                .toList();
-    	QuadraDTO dto = new QuadraDTO(
-    			entity.getId(), 
-    			entity.getNome(), 
-    			entity.isStatus(), 
-    			entity.getLimiteJogadores(), 
-    			entity.isInterna()
-    			);
-    	dto.setDiasSemana(dias);
-    	return dto;
-    }
+	@Autowired
+	private QuadraRepository quadraRepository;
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<QuadraDTO> findAll() {
-        return quadraRepository.findAll()
-                .stream()
-                .map(this::toDto)
-                .toList();
-    }
+	@Autowired
+	private DisponibilidadeRepository disponibilidadeRepository;
 
-    @Override
-    @Transactional(readOnly = true)
-    public QuadraDTO findById(Integer id) {
-        QuadraEntity entity = quadraRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Quadra não encontrada para o ID: " + id));
-        return toDto(entity);
-    }
+	public QuadraEntity toEntity(QuadraDTO dto) {
+		QuadraEntity entity = new QuadraEntity();
+		entity.setNome(dto.getNome());
+		entity.setStatus(dto.isStatus());
+		entity.setLimiteJogadores(dto.getLimiteJogadores());
+		entity.setInterna(dto.isInterna());
+		return entity;
+	}
 
-    @Override
-    @Transactional
-    public QuadraDTO addNew(QuadraDTO dto) {
-        QuadraEntity entity = toEntity(dto);
-        entity = quadraRepository.save(entity);
-        for(Integer dia : dto.getDiasSemana()) {
-        	DisponibilidadeEntity dispoEntity = new DisponibilidadeEntity();
-        	dispoEntity.setHorarioAbertura(dto.getHorarioAbertura());
-        	dispoEntity.setHorarioFechamento(dto.getHorarioFechamento());
-        	dispoEntity.setDia(dia);
-        	dispoEntity.setQuadra(entity);
-        	disponibilidadeRepository.save(dispoEntity);
-        }
-        return toDto(entity);
-    }
+	public QuadraDTO toDto(QuadraEntity entity) {
+		QuadraDTO dto = new QuadraDTO();
 
-    @Override
-    @Transactional
-    public QuadraDTO update(Integer id, QuadraDTO dto) {
-        QuadraEntity entity = quadraRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Quadra não encontrada para o ID: " + id));
-        
-        entity.setNome(dto.getNome());
-        entity.setStatus(dto.isStatus());
-        entity.setLimiteJogadores(dto.getLimiteJogadores());
-        entity.setInterna(dto.isInterna());
+		dto.setNome(entity.getNome());
+		dto.setStatus(entity.isStatus());
+		dto.setLimiteJogadores(entity.getLimiteJogadores());
+		dto.setInterna(entity.isInterna());
 
-        entity = quadraRepository.save(entity);
+		List<Integer> dias = new ArrayList();
 
-        return toDto(entity);
-    }
+		if (entity.getDisponibilidades() != null && !entity.getDisponibilidades().isEmpty()) {
+			dias = entity.getDisponibilidades().stream().map(DisponibilidadeEntity::getDia).toList();
+			DisponibilidadeEntity primeiraDispo = entity.getDisponibilidades().get(0);
+			dto.setHorarioAbertura(primeiraDispo.getHorarioAbertura());
+			dto.setHorarioFechamento(primeiraDispo.getHorarioFechamento());
+		}
 
-    @Override
-    @Transactional
-    public void delete(Integer id) {
-        QuadraEntity entidade = quadraRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Quadra não encontrada para o ID: " + id));
-        quadraRepository.delete(entidade);
-    }
+		dto.setDiasSemana(dias);
+		return dto;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<QuadraDTO> findAll() {
+		return quadraRepository.findAll().stream().map(this::toDto).toList();
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public QuadraDTO findById(Integer id) {
+		QuadraEntity entity = quadraRepository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("Quadra não encontrada para o ID: " + id));
+		return toDto(entity);
+	}
+
+	@Override
+	@Transactional
+	public QuadraDTO addNew(QuadraDTO dto) {
+		QuadraEntity entity = toEntity(dto);
+		entity = quadraRepository.save(entity);
+
+		if (dto.getDiasSemana() != null) {
+			for (Integer dia : dto.getDiasSemana()) {
+				DisponibilidadeEntity dispo = new DisponibilidadeEntity();
+				dispo.setHorarioAbertura(dto.getHorarioAbertura());
+				dispo.setHorarioFechamento(dto.getHorarioFechamento());
+				dispo.setDia(dia);
+				dispo.setQuadra(entity);
+
+				disponibilidadeRepository.save(dispo);
+			}
+		}
+		QuadraDTO quadra = toDto(entity);
+		quadra.setDiasSemana(dto.getDiasSemana());
+		quadra.setHorarioAbertura(dto.getHorarioAbertura());
+		quadra.setHorarioFechamento(dto.getHorarioFechamento());
+
+		return quadra;
+	}
+
+	@Override
+	@Transactional
+	public QuadraDTO update(Integer id, QuadraDTO dto) {
+		QuadraEntity entity = quadraRepository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("Quadra não encontrada para o ID: " + id));
+
+		entity.setNome(dto.getNome());
+		entity.setStatus(dto.isStatus());
+		entity.setLimiteJogadores(dto.getLimiteJogadores());
+		entity.setInterna(dto.isInterna());
+
+		entity = quadraRepository.save(entity);
+
+		return toDto(entity);
+	}
+
+	@Override
+	@Transactional
+	public void delete(Integer id) {
+		QuadraEntity entidade = quadraRepository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("Quadra não encontrada para o ID: " + id));
+		quadraRepository.delete(entidade);
+	}
 
 }

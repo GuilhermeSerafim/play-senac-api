@@ -7,8 +7,6 @@ import java.time.LocalTime;
 import java.util.List;
 
 public class QuadraDTO {
-
-	private int id;
 	
     @NotBlank
     @Size(min = 3)
@@ -27,6 +25,8 @@ public class QuadraDTO {
     private boolean interna;
     
     private List<Integer> diasSemana;
+    
+    public QuadraDTO() { }
 
     public QuadraDTO(@NotBlank @Size(min = 3) String nome, boolean status,
                      @NotNull LocalTime horarioAbertura, @NotNull LocalTime horarioFechamento, Integer limiteJogadores,
@@ -39,22 +39,6 @@ public class QuadraDTO {
         this.interna = interna;
         this.diasSemana = diasSemana;
     }
-
-	public QuadraDTO(Integer id, String nome, boolean status, Integer limiteJogadores, boolean interna) {
-		this.id = id;
-		this.nome = nome;
-	    this.status = status;
-	    this.limiteJogadores = limiteJogadores;
-	    this.interna = interna;
-	}
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
     
     public String getNome() {
         return nome;

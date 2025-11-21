@@ -10,7 +10,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
@@ -36,7 +35,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         entity.setEmail(dto.getEmail());
         entity.setSenha(dto.getSenha());
         entity.setTelefone(dto.getTelefone());
-        entity.setFkRole(1);
+        entity.setFkRole(2);
         return entity;
     }
 

@@ -79,7 +79,7 @@ public class UsuarioDTO {
         entity.setEmail(this.email);
         entity.setSenha(this.senha);
         entity.setTelefone(this.telefone);
-        entity.setFkRole(1);
+        entity.setFkRole(2);
         return entity;
     }
 
