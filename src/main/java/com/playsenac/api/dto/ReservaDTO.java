@@ -18,7 +18,7 @@ public class ReservaDTO {
     @NotNull(message = "Data e hora de fim são obrigatórias")
     private LocalDateTime dataHoraFim;
 
-    private String status; // manter em response DTO
+    private boolean status; // manter em response DTO
 
     @NotNull(message = "ID do usuário é obrigatório")
     private Integer idUsuario;
@@ -29,7 +29,7 @@ public class ReservaDTO {
     public ReservaDTO() {
     }
 
-    public ReservaDTO(Integer idReserva, LocalDateTime dataHoraInicio, LocalDateTime dataHoraFim, String status, Integer idUsuario, Integer idQuadra) {
+    public ReservaDTO(Integer idReserva, LocalDateTime dataHoraInicio, LocalDateTime dataHoraFim, boolean status, Integer idUsuario, Integer idQuadra) {
         this.id = idReserva;
         this.dataHoraInicio = dataHoraInicio;
         this.dataHoraFim = dataHoraFim;
@@ -63,11 +63,11 @@ public class ReservaDTO {
         this.dataHoraFim = dataHoraFim;
     }
 
-    public String getStatus() {
+    public boolean getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(boolean status) {
         this.status = status;
     }
 
