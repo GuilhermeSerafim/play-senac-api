@@ -55,7 +55,7 @@ public class BloqueioServiceImpl implements BloqueioService{
         
         List<ReservaEntity> reservasConflitantes = reservaRepository.findByQuadraAndStatusAndDataHoraInicioBeforeAndDataHoraFimAfter(
             quadra, 
-            "Ativa", 
+            true, 
             dto.getDataHoraFim(), 
             dto.getDataHoraInicio()
         );

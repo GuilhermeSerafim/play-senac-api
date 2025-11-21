@@ -19,7 +19,7 @@ public class ReservaEntity {
     private LocalDateTime dataHoraFim;
 
     @Column(nullable = false)
-    private String status;
+    private boolean status;
 
     @ManyToOne
     @JoinColumn(name = "fk_usuario", nullable = false)
@@ -32,7 +32,7 @@ public class ReservaEntity {
     public ReservaEntity() {
     }
 
-    public ReservaEntity(Integer id_reserva, LocalDateTime dataHoraInicio, LocalDateTime dataHoraFim, String status, UsuarioEntity usuario, QuadraEntity quadra) {
+    public ReservaEntity(Integer id_reserva, LocalDateTime dataHoraInicio, LocalDateTime dataHoraFim, boolean status, UsuarioEntity usuario, QuadraEntity quadra) {
         this.id_reserva = id_reserva;
         this.dataHoraInicio = dataHoraInicio;
         this.dataHoraFim = dataHoraFim;
@@ -69,11 +69,11 @@ public class ReservaEntity {
         this.dataHoraFim = dataHoraFim;
     }
 
-    public String getStatus() {
+    public boolean getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(boolean status) {
         this.status = status;
     }
 
