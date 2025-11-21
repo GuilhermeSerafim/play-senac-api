@@ -10,12 +10,15 @@ import com.playsenac.api.dto.BloqueioDTO;
 import com.playsenac.api.entities.BloqueioEntity;
 import com.playsenac.api.entities.QuadraEntity;
 import com.playsenac.api.entities.ReservaEntity;
+import com.playsenac.api.entities.UsuarioEntity;
 import com.playsenac.api.repository.BloqueioRepository;
 import com.playsenac.api.repository.QuadraRepository;
 import com.playsenac.api.repository.ReservaRepository;
+import com.playsenac.api.repository.UsuarioRepository;
 import com.playsenac.api.service.BloqueioService;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 
 @Service
 public class BloqueioServiceImpl implements BloqueioService{
@@ -29,7 +32,8 @@ public class BloqueioServiceImpl implements BloqueioService{
     @Autowired
     private ReservaRepository reservaRepository;
 
-    
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     @Override
     public BloqueioDTO findById(Integer id){
@@ -43,10 +47,12 @@ public class BloqueioServiceImpl implements BloqueioService{
         return repository.findAll().stream().map(BloqueioDTO::fromEntity).collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public BloqueioDTO addNew(BloqueioDTO dto) {
-        QuadraEntity quadra = quadraRepository.findById(dto.getIdQuadraBloqueada()).orElseThrow(() -> new EntityNotFoundException("Quadra não encontrada"));
-
+        QuadraEntity quadra = quadraRepository.findById(dto.getIdQuadra()).orElseThrow(() -> new EntityNotFoundException("Quadra não encontrada"));
+        UsuarioEntity usuario = usuarioRepository.findById(dto.getIdUsuario()).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+        
         List<ReservaEntity> reservasConflitantes = reservaRepository.findByQuadraAndStatusAndDataHoraInicioBeforeAndDataHoraFimAfter(
             quadra, 
             "Ativa", 
@@ -61,10 +67,14 @@ public class BloqueioServiceImpl implements BloqueioService{
             BloqueioEntity entity = new BloqueioEntity();
             entity.setDataHoraInicio(dto.getDataHoraInicio());
             entity.setDataHoraFim(dto.getDataHoraFim());
+            entity.setMotivo(dto.getMotivo());
             entity.setQuadraBloqueada(quadra);
+            entity.setUsuarioBloqueador(usuario);
             
             BloqueioEntity entidadeSalva = repository.save(entity);
     
+            quadra.setStatus(false);
+            quadraRepository.save(quadra);
             
             return BloqueioDTO.fromEntity(entidadeSalva);
         }
