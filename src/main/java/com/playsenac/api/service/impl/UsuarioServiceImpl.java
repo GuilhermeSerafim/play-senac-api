@@ -20,14 +20,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Autowired
     private PasswordEncoder encoder;
     
-    @Override
-    @Transactional(readOnly = true)
-    public UsuarioDTO findById(Integer id) {
-        UsuarioEntity entity = usuarioRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado para o ID: " + id));
-        return UsuarioDTO.fromEntity(entity);
 
-    }
 
     public UsuarioEntity toEntity(UsuarioDTO dto) {
         UsuarioEntity entity = new UsuarioEntity();
@@ -37,6 +30,13 @@ public class UsuarioServiceImpl implements UsuarioService {
         entity.setTelefone(dto.getTelefone());
         entity.setFkRole(1);
         return entity;
+    }
+
+    @Override
+    public UsuarioDTO findByEmail(String email) {
+        UsuarioEntity entity = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado com o email: " + email));
+        return UsuarioDTO.fromEntity(entity);
     }
 
     @Override

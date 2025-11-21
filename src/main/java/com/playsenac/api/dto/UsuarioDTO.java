@@ -23,7 +23,7 @@ public class UsuarioDTO {
 
     private String telefone;
 
-    public UsuarioDTO(String nome, String email, String senha, String telefone, int fk_role) {
+    public UsuarioDTO(String nome, String email, String senha, String telefone) {
         this.nome = nome;
         this.email = email;
         this.senha = senha;
@@ -67,9 +67,8 @@ public class UsuarioDTO {
         return new UsuarioDTO(
                 entity.getNome(),
                 entity.getEmail(),
-                entity.getSenha(),
-                entity.getTelefone(),
-                entity.getFkRole()
+                null,
+                entity.getTelefone()
         );
     }
 

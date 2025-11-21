@@ -60,6 +60,7 @@ public class SecurityConfig {
 						.requestMatchers("/usuarios/cadastro").permitAll()
 						.requestMatchers("/login").permitAll()
 						.requestMatchers(HttpMethod.GET, "/quadras").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/usuarios/buscar").permitAll()
 						
 						//requisições exclusivas do administrador
 						.requestMatchers("/quadras/**").hasAuthority("ADMIN")
