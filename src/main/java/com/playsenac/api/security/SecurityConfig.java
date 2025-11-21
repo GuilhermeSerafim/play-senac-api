@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -35,10 +36,7 @@ public class SecurityConfig {
 		encoders.put("bycrypt", bcryptEnc);
 		encoders.put("noop", NoOpPasswordEncoder.getInstance());
 		var passwordEncoder = new DelegatingPasswordEncoder("bycrypt", encoders);
-		/* na linha 34 deve ser trocada para passwordEncoder.setDefaultPasswordEncoderForMatches(bcryptEnc).
-		 * para realizar a validação da senha com criptografia, atualmente compara texto simples como .equals;
-		 * */
-		passwordEncoder.setDefaultPasswordEncoderForMatches(NoOpPasswordEncoder.getInstance());
+		passwordEncoder.setDefaultPasswordEncoderForMatches(bcryptEnc);
 		return passwordEncoder;
 	}
 	
@@ -57,10 +55,21 @@ public class SecurityConfig {
 				.headers(headers -> headers.frameOptions(fo -> fo.sameOrigin()))
 				.formLogin(formLogin -> formLogin.disable())
 				.authorizeHttpRequests(authorize -> authorize
+						//requisições sem a necessidade de autenticação ou autorização
 						.requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+						.requestMatchers("/usuarios/cadastro").permitAll()
 						.requestMatchers("/login").permitAll()
-						.requestMatchers("/admin").hasAuthority("ADMIN")
-						.anyRequest().authenticated())
+						.requestMatchers(HttpMethod.GET, "/quadras").permitAll()
+						
+						//requisições exclusivas do administrador
+						.requestMatchers("/quadras/**").hasAuthority("ADMIN")
+						.requestMatchers("/bloqueios/**").hasAuthority("ADMIN")
+						
+						//requisições exclusivas do usuario
+						.requestMatchers("/reservas/**").hasAuthority("COMUM")
+						
+						.anyRequest().authenticated()
+						)
 				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
 				.build();
 	}

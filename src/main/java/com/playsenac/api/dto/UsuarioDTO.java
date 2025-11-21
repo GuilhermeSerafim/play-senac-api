@@ -18,18 +18,16 @@ public class UsuarioDTO {
 
     @NotBlank(message = "Senha é obrigatória")
     @Size(min = 6, max = 100, message = "Senha deve ter entre {min} e {max} caracteres")
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[@$!%*?&])[A-Za-z0-9@$!%*?&]{8,}$")
     private String senha;
 
     private String telefone;
-
-    private int fk_role;
 
     public UsuarioDTO(String nome, String email, String senha, String telefone, int fk_role) {
         this.nome = nome;
         this.email = email;
         this.senha = senha;
         this.telefone = telefone;
-        this.fk_role = fk_role;
     }
 
     public String getNome() {
@@ -64,14 +62,6 @@ public class UsuarioDTO {
         this.telefone = telefone;
     }
 
-    public void setFk_role(int fk_role) {
-        this.fk_role = fk_role;
-    }
-
-    public int getFk_role() {
-        return fk_role;
-    }
-
     public static UsuarioDTO fromEntity(UsuarioEntity entity){
         if (entity == null) return null;
         return new UsuarioDTO(
@@ -89,7 +79,7 @@ public class UsuarioDTO {
         entity.setEmail(this.email);
         entity.setSenha(this.senha);
         entity.setTelefone(this.telefone);
-        entity.setFkRole(this.fk_role);
+        entity.setFkRole(1);
         return entity;
     }
 

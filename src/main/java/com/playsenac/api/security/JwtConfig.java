@@ -26,7 +26,7 @@ import com.nimbusds.jose.proc.SecurityContext;
 @Configuration
 public class JwtConfig {
 
-	@Value("${token.chave}")
+	@Value("${TOKEN_CHAVE}")
 	private String CHAVE;
 	
 	@Bean
