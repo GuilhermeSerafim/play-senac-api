@@ -35,7 +35,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         entity.setEmail(dto.getEmail());
         entity.setSenha(dto.getSenha());
         entity.setTelefone(dto.getTelefone());
-        entity.setFkRole(2);
+        entity.setFkRole(1);
         return entity;
     }
 
