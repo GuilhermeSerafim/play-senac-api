@@ -12,8 +12,8 @@ public class ReservaEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id_reserva;
 
-     @Column(name = "data_hora_inicio", nullable = false)
-     private LocalDateTime dataHoraInicio;
+    @Column(name = "data_hora_inicio", nullable = false)
+    private LocalDateTime dataHoraInicio;
 
     @Column(name = "data_hora_fim", nullable = false)
     private LocalDateTime dataHoraFim;
@@ -25,12 +25,9 @@ public class ReservaEntity {
     @JoinColumn(name = "fk_usuario", nullable = false)
     private UsuarioEntity usuario;
 
-
     @ManyToOne
     @JoinColumn(name = "fk_quadra", nullable = false)
     private QuadraEntity quadra;
-
-
 
     public ReservaEntity() {
     }
