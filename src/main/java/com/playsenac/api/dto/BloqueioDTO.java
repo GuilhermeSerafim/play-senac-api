@@ -82,7 +82,7 @@ public class BloqueioDTO {
         		entity.getDataHoraFim(),
         		entity.getMotivo(),
         		entity.getUsuarioBloqueador().getId_usuario(),
-        		entity.getQuadraBloqueada().getId()
+        		entity.getQuadraBloqueada().getId_quadra()
             );
     }
 	

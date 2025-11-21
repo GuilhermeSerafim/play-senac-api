@@ -94,7 +94,7 @@ public class ReservaDTO {
                 entity.getDataHoraFim(),
                 entity.getStatus(),
                 entity.getUsuario() != null ? entity.getUsuario().getId_usuario() : null,
-                entity.getQuadra() != null ? entity.getQuadra().getId() : null
+                entity.getQuadra() != null ? entity.getQuadra().getId_quadra() : null
         );
     }
 
