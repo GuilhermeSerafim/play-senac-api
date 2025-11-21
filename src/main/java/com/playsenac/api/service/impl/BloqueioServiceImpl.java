@@ -73,7 +73,6 @@ public class BloqueioServiceImpl implements BloqueioService{
             
             BloqueioEntity entidadeSalva = repository.save(entity);
     
-            quadra.setStatus(false);
             quadraRepository.save(quadra);
             
             return BloqueioDTO.fromEntity(entidadeSalva);
