@@ -41,10 +41,6 @@ public class ReservaEntity {
         this.quadra = quadra;
     }
 
-    public Integer getIdreserva() {
-        return id_reserva;
-    }
-
     public Integer getId_reserva() {
         return id_reserva;
     }

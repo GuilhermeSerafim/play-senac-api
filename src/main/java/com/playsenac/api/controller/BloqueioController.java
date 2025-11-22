@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.playsenac.api.dto.BloqueioDTO;
+import com.playsenac.api.dto.BloqueioDTOId;
 import com.playsenac.api.service.BloqueioService;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -28,14 +29,14 @@ public class BloqueioController {
     private BloqueioService service;
 
     @GetMapping
-    public List<BloqueioDTO> findAll() {
+    public List<BloqueioDTOId> findAll() {
         return service.findAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BloqueioDTO> findById(@PathVariable Integer id) {
+    public ResponseEntity<BloqueioDTOId> findById(@PathVariable Integer id) {
         try {
-            BloqueioDTO bloqueio = service.findById(id);
+            BloqueioDTOId bloqueio = service.findById(id);
             return ResponseEntity.ok(bloqueio);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();

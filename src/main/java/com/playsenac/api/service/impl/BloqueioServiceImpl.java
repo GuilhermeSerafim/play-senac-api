@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.playsenac.api.dto.BloqueioDTO;
+import com.playsenac.api.dto.BloqueioDTOId;
 import com.playsenac.api.entities.BloqueioEntity;
 import com.playsenac.api.entities.QuadraEntity;
 import com.playsenac.api.entities.ReservaEntity;
@@ -35,21 +36,20 @@ public class BloqueioServiceImpl implements BloqueioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    @Override
-    public BloqueioDTO findById(Integer id){
-        BloqueioEntity entity = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Bloqueio não encontrado: " + id));
 
-        return toDto(entity);
+    private BloqueioDTOId toDtoId(BloqueioEntity entity) {
+        BloqueioDTOId dto = new BloqueioDTOId();
+        dto.setId(entity.getId_bloqueio());
+        dto.setDataHoraInicio(entity.getDataHoraInicio());
+        dto.setDataHoraFim(entity.getDataHoraFim());
+        dto.setMotivo(entity.getMotivo());
+        
+        if (entity.getQuadra() != null) {
+            dto.setIdQuadra(entity.getQuadra().getId_quadra());
+        }
+        return dto;
     }
-
-    @Override
-    public List<BloqueioDTO> findAll() {
-        return repository.findAll().stream()
-                .map(this::toDto)
-                .collect(Collectors.toList());
-    }
-
+    
     private BloqueioDTO toDto(BloqueioEntity entity) {
         BloqueioDTO dto = new BloqueioDTO();
         dto.setDataHoraInicio(entity.getDataHoraInicio());
@@ -60,6 +60,22 @@ public class BloqueioServiceImpl implements BloqueioService {
             dto.setIdQuadra(entity.getQuadra().getId_quadra());
         }
         return dto;
+    }
+    
+    
+    @Override
+    public BloqueioDTOId findById(Integer id){
+        BloqueioEntity entity = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Bloqueio não encontrado: " + id));
+
+        return toDtoId(entity);
+    }
+
+    @Override
+    public List<BloqueioDTOId> findAll() {
+        return repository.findAll().stream()
+                .map(this::toDtoId)
+                .collect(Collectors.toList());
     }
 
     @Override

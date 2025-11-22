@@ -3,12 +3,13 @@ package com.playsenac.api.service;
 import java.util.List;
 
 import com.playsenac.api.dto.BloqueioDTO;
+import com.playsenac.api.dto.BloqueioDTOId;
 
 public interface BloqueioService {
 
-    List<BloqueioDTO> findAll();
+    List<BloqueioDTOId> findAll();
 
-    BloqueioDTO findById(Integer id);
+    BloqueioDTOId findById(Integer id);
 
     BloqueioDTO addNew(BloqueioDTO dto);
 }

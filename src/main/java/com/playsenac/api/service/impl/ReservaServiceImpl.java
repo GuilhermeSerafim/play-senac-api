@@ -1,6 +1,7 @@
 package com.playsenac.api.service.impl;
 
 import com.playsenac.api.dto.ReservaDTO;
+import com.playsenac.api.dto.ReservaDTOId;
 import com.playsenac.api.entities.ConvidadoEntity;
 import com.playsenac.api.entities.QuadraEntity;
 import com.playsenac.api.entities.ReservaEntity;
@@ -44,6 +45,17 @@ public class ReservaServiceImpl implements ReservaService {
     	return dto;
     }
     
+    public ReservaDTOId toDtoId(ReservaEntity entity) {
+    	ReservaDTOId dto = new ReservaDTOId();
+    	dto.setId(entity.getId_reserva());
+    	dto.setDataHoraInicio(entity.getDataHoraInicio());
+    	dto.setDataHoraFim(entity.getDataHoraFim());
+    	dto.setIdUsuario(entity.getUsuario().getId_usuario());
+    	dto.setIdQuadra(entity.getQuadra().getId_quadra());
+    	dto.setConvidados(entity.getConvidados());
+    	return dto;
+    }
+    
     public ReservaEntity toEntity(ReservaDTO dto) {
     	UsuarioEntity usuario = usuarioRepository.findById(dto.getIdUsuario())
                 .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado com ID: " + dto.getIdUsuario()));
@@ -61,18 +73,18 @@ public class ReservaServiceImpl implements ReservaService {
     
     @Override
     @Transactional(readOnly = true)
-    public List<ReservaDTO> findAll() {
+    public List<ReservaDTOId> findAll() {
         return reservaRepository.findAll()
                 .stream()
-                .map(this::toDto)
+                .map(this::toDtoId)
                 .toList();
     }
 
     @Override
-    public ReservaDTO findById(Integer id) {
+    public ReservaDTOId findById(Integer id) {
         ReservaEntity entity = reservaRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Reserva não encontrada para o ID: " + id));
-        return toDto(entity);
+        return toDtoId(entity);
     }
 
     @Override
