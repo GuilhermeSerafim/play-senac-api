@@ -35,12 +35,13 @@ public class LoginController {
         }
         UsuarioSistema usuario = (UsuarioSistema) auth.getPrincipal();
         String jwt = service.gerarTokenJwt(usuario);
-        return ResponseEntity.ok().body(new RespostaLogin(usuario.getEmail(), jwt));
+        String role = usuario.getRole().getNome();
+        return ResponseEntity.ok().body(new RespostaLogin(usuario.getEmail(), role, jwt));
     }
 
     public record Credencial(String email, String senha) {
     }
 
-    public record RespostaLogin(String email, String token) {
+    public record RespostaLogin(String email, String role, String token) {
     }
 }

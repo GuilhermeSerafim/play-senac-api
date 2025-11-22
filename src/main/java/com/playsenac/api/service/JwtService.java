@@ -29,11 +29,11 @@ public class JwtService {
 	@Autowired
 	private JwtDecoder decode;
 	
-	private int tempoExpiracao = 120;
+	private int tempoExpiracao = 72;
 	
 	public String gerarTokenJwt(UsuarioSistema usuario) {
 		Instant agora = Instant.now();
-		Instant expiracao = agora.plus(tempoExpiracao, ChronoUnit.MINUTES);
+		Instant expiracao = agora.plus(tempoExpiracao, ChronoUnit.HOURS);
 		String permissao = usuario.getRole().getNome();
 		JwtClaimsSet claims = JwtClaimsSet.builder()
 				.issuer("ver")

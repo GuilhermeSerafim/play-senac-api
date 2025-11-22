@@ -32,7 +32,7 @@ public class QuadraEntity {
     @OneToMany(mappedBy = "quadra", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JsonIgnore
     private List<BloqueioEntity> bloqueios;
-
+    
     @OneToMany(mappedBy = "quadra", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DisponibilidadeEntity> disponibilidades = new ArrayList<>();
 
