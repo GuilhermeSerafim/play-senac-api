@@ -1,6 +1,7 @@
 package com.playsenac.api.dto;
 
 import com.playsenac.api.entities.UsuarioEntity;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -16,6 +17,7 @@ public class UsuarioDTO {
     @Email(message = "Formato de email inválido")
     private String email;
 
+
     @NotBlank(message = "Senha é obrigatória")
     @Size(min = 6, max = 100, message = "Senha deve ter entre {min} e {max} caracteres")
     @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[@$!%*?&])[A-Za-z0-9@$!%*?&]{8,}$")
@@ -23,7 +25,9 @@ public class UsuarioDTO {
 
     private String telefone;
 
-    public UsuarioDTO(String nome, String email, String senha, String telefone, int fk_role) {
+    public UsuarioDTO(){}
+
+    public UsuarioDTO(String nome, String email, String senha, String telefone) {
         this.nome = nome;
         this.email = email;
         this.senha = senha;
@@ -68,8 +72,7 @@ public class UsuarioDTO {
                 entity.getNome(),
                 entity.getEmail(),
                 entity.getSenha(),
-                entity.getTelefone(),
-                entity.getFkRole()
+                entity.getTelefone()
         );
     }
 
