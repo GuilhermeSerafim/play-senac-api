@@ -60,19 +60,23 @@ public class SecurityConfig {
 						.requestMatchers("/usuarios/cadastro").permitAll()
 						.requestMatchers("/login").permitAll()
 						.requestMatchers(HttpMethod.GET, "/quadras").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/usuarios/buscar").permitAll()
-                                .requestMatchers(HttpMethod.PUT, "/usuarios/atualizar/**").permitAll()
-                                .requestMatchers(HttpMethod.DELETE, "/usuarios/deletar/**").permitAll()
 						
-						.requestMatchers("/reservas/**").permitAll()
+						//requisições para ambos
+						.requestMatchers(HttpMethod.GET, "/reservas/**").hasAnyAuthority("ADMIN", "COMUM")
+						.requestMatchers(HttpMethod.POST, "/reservas/**").hasAnyAuthority("ADMIN", "COMUM")
 						
 						//requisições exclusivas do administrador
 						.requestMatchers("/quadras/**").hasAuthority("ADMIN")
 						.requestMatchers("/bloqueios/**").hasAuthority("ADMIN")
+						.requestMatchers(HttpMethod.PUT, "/reservas/**").hasAuthority("ADMIN")
+						.requestMatchers(HttpMethod.DELETE, "/reservas/**").hasAuthority("ADMIN")
 						
 						//requisições exclusivas do usuario
 						.requestMatchers(HttpMethod.PUT ,"/usuarios/**").hasAuthority("COMUM")
 						.requestMatchers(HttpMethod.DELETE ,"/usuarios/**").hasAuthority("COMUM")
+                        .requestMatchers(HttpMethod.GET, "/usuarios/buscar").hasAuthority("COMUM")
+                        .requestMatchers(HttpMethod.PUT, "/usuarios/atualizar/**").hasAuthority("COMUM")
+                        .requestMatchers(HttpMethod.DELETE, "/usuarios/deletar/**").hasAuthority("COMUM")
 						
 						.anyRequest().authenticated()
 						)

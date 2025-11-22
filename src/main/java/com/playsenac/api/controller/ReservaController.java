@@ -18,6 +18,7 @@ import java.util.List;
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/reservas")
+@SecurityRequirement(name = "bearer-jwt")
 public class ReservaController {
 
     @Autowired
