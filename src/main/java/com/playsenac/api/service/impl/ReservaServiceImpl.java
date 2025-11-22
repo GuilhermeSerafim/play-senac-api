@@ -16,8 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -108,8 +106,36 @@ public class ReservaServiceImpl implements ReservaService {
     }
 
     @Override
-    public ReservaDTO update(Integer id, LocalDateTime novaDataHoraInicio, LocalDateTime novaDataHoraFim) {
-        return null;
+    @Transactional
+    public ReservaDTO update(Integer id, ReservaDTO dto) {
+        ReservaEntity entity = reservaRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Reserva não encontrada para o ID: " + id));
+
+        entity.setDataHoraInicio(dto.getDataHoraInicio());
+        entity.setDataHoraFim(dto.getDataHoraFim());
+        if (!(entity.getUsuario().getId_usuario() == (dto.getIdUsuario()))) {
+            UsuarioEntity novoUsuario = usuarioRepository.findById(dto.getIdUsuario())
+                    .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado com ID: " + dto.getIdUsuario()));
+            entity.setUsuario(novoUsuario);
+        }
+
+        if (!entity.getQuadra().getId_quadra().equals(dto.getIdQuadra())) {
+            QuadraEntity novaQuadra = quadraRepository.findById(dto.getIdQuadra())
+                    .orElseThrow(() -> new EntityNotFoundException("Quadra não encontrada com ID: " + dto.getIdQuadra()));
+            entity.setQuadra(novaQuadra);
+        }
+
+        if (dto.getConvidados() != null) {
+            entity.getConvidados().clear();
+
+            for (ConvidadoEntity convidado : dto.getConvidados()) {
+                convidado.setReserva(entity); 
+                entity.getConvidados().add(convidado);
+            }
+        }
+        entity = reservaRepository.save(entity);
+
+        return toDto(entity);
     }
 
     @Override

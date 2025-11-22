@@ -53,6 +53,12 @@ public class ReservaController {
         return ResponseEntity.created(location).body(novaReserva);
     }
     
+    @PutMapping("/{id}")
+    public ResponseEntity<ReservaDTO> update(@PathVariable Integer id, @RequestBody @Valid ReservaDTO dto) {
+    	ReservaDTO upDTO = service.update(id, dto);
+    	return ResponseEntity.ok(upDTO);
+    }
+    
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
     	service.delete(id);
