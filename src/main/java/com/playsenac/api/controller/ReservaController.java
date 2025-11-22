@@ -1,6 +1,7 @@
 package com.playsenac.api.controller;
 
 import com.playsenac.api.dto.ReservaDTO;
+import com.playsenac.api.dto.ReservaDTOId;
 import com.playsenac.api.service.ReservaService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -25,9 +26,9 @@ public class ReservaController {
     private ReservaService service;
 
     @GetMapping
-    public ResponseEntity<List<ReservaDTO>> findAll() {
+    public ResponseEntity<List<ReservaDTOId>> findAll() {
         try {
-            List<ReservaDTO> reservas = service.findAll();
+            List<ReservaDTOId> reservas = service.findAll();
             return ResponseEntity.ok(reservas);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -36,9 +37,9 @@ public class ReservaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ReservaDTO> findById(@PathVariable Integer id) {
+    public ResponseEntity<ReservaDTOId> findById(@PathVariable Integer id) {
         try {
-            ReservaDTO reserva = service.findById(id);
+            ReservaDTOId reserva = service.findById(id);
             return ResponseEntity.ok(reserva);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
