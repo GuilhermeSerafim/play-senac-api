@@ -1,6 +1,7 @@
 package com.playsenac.api.service.impl;
 
 import com.playsenac.api.dto.QuadraDTO;
+import com.playsenac.api.dto.QuadraDTOId;
 import com.playsenac.api.entities.DisponibilidadeEntity;
 import com.playsenac.api.entities.QuadraEntity;
 import com.playsenac.api.repository.DisponibilidadeRepository;
@@ -58,21 +59,46 @@ public class QuadraServiceImpl implements QuadraService {
         return dto;
     }
 
+    private QuadraDTOId toDtoId(QuadraEntity entity) {
+        List<Integer> diasSemana = entity.getDisponibilidades().stream()
+                .map(DisponibilidadeEntity::getDia)
+                .toList();
+
+        java.time.LocalTime abertura = null;
+        java.time.LocalTime fechamento = null;
+
+        if (!entity.getDisponibilidades().isEmpty()) {
+            abertura = entity.getDisponibilidades().get(0).getHorarioAbertura();
+            fechamento = entity.getDisponibilidades().get(0).getHorarioFechamento();
+        }
+
+        return new QuadraDTOId(
+                entity.getId_quadra(),
+                entity.getNome(),
+                entity.isBloqueada(),
+                abertura,
+                fechamento,
+                entity.getLimiteJogadores(),
+                entity.getImagemUrl(),
+                diasSemana
+        );
+    }
+
     @Override
     @Transactional(readOnly = true)
-    public List<QuadraDTO> findAll() {
+    public List<QuadraDTOId> findAll() {
         return quadraRepository.findAll()
                 .stream()
-                .map(this::toDto)
+                .map(this::toDtoId)
                 .toList();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public QuadraDTO findById(Integer id) {
+    public QuadraDTOId findById(Integer id) {
         QuadraEntity entity = quadraRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Quadra não encontrada para o ID: " + id));
-        return toDto(entity);
+                .orElseThrow(() -> new EntityNotFoundException("Quadra não encontrada com ID: " + id));
+        return toDtoId(entity);
     }
 
     @Override

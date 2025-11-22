@@ -53,9 +53,8 @@ public class BloqueioServiceImpl implements BloqueioService{
         QuadraEntity quadra = quadraRepository.findById(dto.getIdQuadra()).orElseThrow(() -> new EntityNotFoundException("Quadra não encontrada"));
         UsuarioEntity usuario = usuarioRepository.findById(dto.getIdUsuario()).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
         
-        List<ReservaEntity> reservasConflitantes = reservaRepository.findByQuadraAndStatusAndDataHoraInicioBeforeAndDataHoraFimAfter(
+        List<ReservaEntity> reservasConflitantes = reservaRepository.findByQuadraAndDataHoraInicioBeforeAndDataHoraFimAfter(
             quadra, 
-            true, 
             dto.getDataHoraFim(), 
             dto.getDataHoraInicio()
         );

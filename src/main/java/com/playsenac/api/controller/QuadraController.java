@@ -1,6 +1,7 @@
 package com.playsenac.api.controller;
 
 import com.playsenac.api.dto.QuadraDTO;
+import com.playsenac.api.dto.QuadraDTOId;
 import com.playsenac.api.service.QuadraService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -24,15 +25,15 @@ public class QuadraController {
     private QuadraService service;
 
     @GetMapping
-    public List<QuadraDTO> findAll() {
+    public List<QuadraDTOId> findAll() {
         return service.findAll();
     }
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<QuadraDTO> findById(@PathVariable Integer id) {
+    public ResponseEntity<QuadraDTOId> findById(@PathVariable Integer id) {
         try {
-            QuadraDTO quadra = service.findById(id);
+            QuadraDTOId quadra = service.findById(id);
             return ResponseEntity.ok(quadra);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();

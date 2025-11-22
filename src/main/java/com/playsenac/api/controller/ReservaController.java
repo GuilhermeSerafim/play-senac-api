@@ -1,6 +1,5 @@
 package com.playsenac.api.controller;
 
-import com.playsenac.api.dto.QuadraDTO;
 import com.playsenac.api.dto.ReservaDTO;
 import com.playsenac.api.service.ReservaService;
 
@@ -19,7 +18,6 @@ import java.util.List;
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/reservas")
-@SecurityRequirement(name = "bearer-jwt")
 public class ReservaController {
 
     @Autowired
@@ -49,7 +47,7 @@ public class ReservaController {
     @PostMapping
     public ResponseEntity<ReservaDTO> addNew(@Valid @RequestBody ReservaDTO dto) {
         ReservaDTO novaReserva = service.addNew(dto);
-        URI location = URI.create("/reservas/" + novaReserva.getId());
+        URI location = URI.create("/reservas/" + novaReserva.getDataHoraInicio());
         return ResponseEntity.created(location).body(novaReserva);
     }
 
