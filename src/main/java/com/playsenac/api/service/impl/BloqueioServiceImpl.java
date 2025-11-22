@@ -103,6 +103,9 @@ public class BloqueioServiceImpl implements BloqueioService {
             reservaRepository.deleteAll(reservasConflitantes);
         }
 
+        quadra.setBloqueada(true);
+        quadraRepository.save(quadra);
+        
         BloqueioEntity entity = new BloqueioEntity();
         entity.setQuadra(quadra);
         entity.setUsuarioBloqueador(usuario);

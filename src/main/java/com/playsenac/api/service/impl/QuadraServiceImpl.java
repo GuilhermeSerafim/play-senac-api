@@ -133,6 +133,19 @@ public class QuadraServiceImpl implements QuadraService {
         QuadraEntity entity = quadraRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Quadra não encontrada para o ID: " + id));
 
+        if (dto.getDiasSemana() != null) {
+        	entity.getDisponibilidades().clear();
+            for (Integer dia : dto.getDiasSemana()) {
+                DisponibilidadeEntity dispo = new DisponibilidadeEntity();
+                dispo.setHorarioAbertura(dto.getHorarioAbertura());
+                dispo.setHorarioFechamento(dto.getHorarioFechamento());
+                dispo.setDia(dia);
+                dispo.setQuadra(entity);
+
+                entity.getDisponibilidades().add(dispo);
+            }
+        }
+        
         entity.setNome(dto.getNome());
         entity.setLimiteJogadores(dto.getLimiteJogadores());
         entity.setImagemUrl(dto.getImagemUrl());
