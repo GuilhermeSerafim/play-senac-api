@@ -65,6 +65,7 @@ public class SecurityConfig {
 						//requisições exclusivas do administrador
 						.requestMatchers("/quadras/**").hasAuthority("ADMIN")
 						.requestMatchers("/bloqueios/**").hasAuthority("ADMIN")
+						.requestMatchers(HttpMethod.GET, "/reservas/**").hasAuthority("ADMIN")
 						
 						//requisições exclusivas do usuario
 						.requestMatchers("/reservas/**").hasAuthority("COMUM")

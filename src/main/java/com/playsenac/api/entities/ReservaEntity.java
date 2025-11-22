@@ -12,30 +12,27 @@ public class ReservaEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id_reserva;
 
-     @Column(name = "data_hora_inicio", nullable = false)
-     private LocalDateTime dataHoraInicio;
+    @Column(name = "data_hora_inicio", nullable = false)
+    private LocalDateTime dataHoraInicio;
 
     @Column(name = "data_hora_fim", nullable = false)
     private LocalDateTime dataHoraFim;
 
     @Column(nullable = false)
-    private String status;
+    private boolean status;
 
     @ManyToOne
     @JoinColumn(name = "fk_usuario", nullable = false)
     private UsuarioEntity usuario;
 
-
     @ManyToOne
     @JoinColumn(name = "fk_quadra", nullable = false)
     private QuadraEntity quadra;
 
-
-
     public ReservaEntity() {
     }
 
-    public ReservaEntity(Integer id_reserva, LocalDateTime dataHoraInicio, LocalDateTime dataHoraFim, String status, UsuarioEntity usuario, QuadraEntity quadra) {
+    public ReservaEntity(Integer id_reserva, LocalDateTime dataHoraInicio, LocalDateTime dataHoraFim, boolean status, UsuarioEntity usuario, QuadraEntity quadra) {
         this.id_reserva = id_reserva;
         this.dataHoraInicio = dataHoraInicio;
         this.dataHoraFim = dataHoraFim;
@@ -72,11 +69,11 @@ public class ReservaEntity {
         this.dataHoraFim = dataHoraFim;
     }
 
-    public String getStatus() {
+    public boolean getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(boolean status) {
         this.status = status;
     }
 

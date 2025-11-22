@@ -12,7 +12,7 @@ public class QuadraDTO {
     @Size(min = 3)
     private String nome;
 
-    private boolean status;
+    private boolean isBloqueada;
 
     @NotNull
     private LocalTime horarioAbertura;
@@ -21,22 +21,21 @@ public class QuadraDTO {
     private LocalTime horarioFechamento;
 
     private Integer limiteJogadores;
-
-    private boolean interna;
+    
+    private String imagemUrl; 
     
     private List<Integer> diasSemana;
     
     public QuadraDTO() { }
 
-    public QuadraDTO(@NotBlank @Size(min = 3) String nome, boolean status,
-                     @NotNull LocalTime horarioAbertura, @NotNull LocalTime horarioFechamento, Integer limiteJogadores,
-                     boolean interna, List<Integer> diasSemana) {
+    public QuadraDTO(String nome, boolean isBloqueada, LocalTime horarioAbertura, 
+                     LocalTime horarioFechamento, Integer limiteJogadores, String imagemUrl, List<Integer> diasSemana) {
         this.nome = nome;
-        this.status = status;
+        this.isBloqueada = isBloqueada;
         this.horarioAbertura = horarioAbertura;
         this.horarioFechamento = horarioFechamento;
         this.limiteJogadores = limiteJogadores;
-        this.interna = interna;
+        this.imagemUrl = imagemUrl;
         this.diasSemana = diasSemana;
     }
     
@@ -48,6 +47,13 @@ public class QuadraDTO {
         this.nome = nome;
     }
 
+    public boolean isBloqueada() {
+        return isBloqueada;
+    }
+
+    public void setBloqueada(boolean isBloqueada) {
+        this.isBloqueada = isBloqueada;
+    }
 
     public LocalTime getHorarioAbertura() {
         return horarioAbertura;
@@ -73,20 +79,12 @@ public class QuadraDTO {
         this.limiteJogadores = limiteJogadores;
     }
 
-    public boolean isInterna() {
-        return interna;
+    public String getImagemUrl() {
+        return imagemUrl;
     }
 
-    public void setInterna(boolean interna) {
-        this.interna = interna;
-    }
-
-    public boolean isStatus(){
-        return status;
-    }
-
-    public void setStatus(boolean status) {
-        this.status = status;
+    public void setImagemUrl(String imagemUrl) {
+        this.imagemUrl = imagemUrl;
     }
 
 	public List<Integer> getDiasSemana() {

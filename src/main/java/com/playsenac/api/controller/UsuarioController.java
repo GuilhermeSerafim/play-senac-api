@@ -15,6 +15,7 @@ import java.net.URI;
 @RestController
 @RequestMapping("/usuarios")
 public class UsuarioController {
+	
     @Autowired
     private UsuarioService service;
 

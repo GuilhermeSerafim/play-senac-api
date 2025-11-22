@@ -9,13 +9,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.playsenac.api.dto.BloqueioDTO;
 import com.playsenac.api.service.BloqueioService;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 
@@ -46,7 +46,7 @@ public class BloqueioController {
     public ResponseEntity<BloqueioDTO> addNew(@RequestBody @Valid BloqueioDTO bloqueioDTO) {
         BloqueioDTO dtoSalvo = service.addNew(bloqueioDTO);
 
-        URI location = URI.create("/bloqueios/" + dtoSalvo.getId());
+        URI location = URI.create("/bloqueios/" + dtoSalvo.getIdQuadra());
 
         return ResponseEntity.created(location).body(dtoSalvo);
     }

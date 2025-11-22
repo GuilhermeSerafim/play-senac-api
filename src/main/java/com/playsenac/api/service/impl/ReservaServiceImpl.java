@@ -56,7 +56,7 @@ public class ReservaServiceImpl implements ReservaService {
         ReservaEntity entity = new ReservaEntity();
         entity.setDataHoraInicio(dto.getDataHoraInicio());
         entity.setDataHoraFim(dto.getDataHoraFim());
-        entity.setStatus("ATIVA");
+        entity.setStatus(true);
         entity.setUsuario(usuarioEntity);
         entity.setQuadra(quadraEntity);
         ReservaEntity savedEntity = reservaRepository.save(entity);

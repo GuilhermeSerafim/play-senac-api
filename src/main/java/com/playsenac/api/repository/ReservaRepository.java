@@ -12,7 +12,7 @@ public interface ReservaRepository extends JpaRepository<ReservaEntity, Integer>
 
     List<ReservaEntity> findByQuadraAndStatusAndDataHoraInicioBeforeAndDataHoraFimAfter(
         QuadraEntity quadra,
-        String status,
+        boolean status,
         LocalDateTime dataHoraFimDoBloqueio,
         LocalDateTime dataHoraInicioDoBloqueio
     );
