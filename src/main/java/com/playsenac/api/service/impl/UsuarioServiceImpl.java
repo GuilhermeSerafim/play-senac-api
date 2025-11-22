@@ -20,14 +20,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Autowired
     private PasswordEncoder encoder;
     
-    @Override
-    @Transactional(readOnly = true)
-    public UsuarioDTO findById(Integer id) {
-        UsuarioEntity entity = usuarioRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado para o ID: " + id));
-        return UsuarioDTO.fromEntity(entity);
 
-    }
 
     public UsuarioEntity toEntity(UsuarioDTO dto) {
         UsuarioEntity entity = new UsuarioEntity();
@@ -40,6 +33,13 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
+    public UsuarioDTO findByEmail(String email) {
+        UsuarioEntity entity = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado com o email: " + email));
+        return UsuarioDTO.fromEntity(entity);
+    }
+
+    @Override
     @Transactional
     public UsuarioDTO addNew(UsuarioDTO dto) {
         UsuarioEntity ue = toEntity(dto);
@@ -47,5 +47,26 @@ public class UsuarioServiceImpl implements UsuarioService {
         ue.setSenha(senhaCriptografada);
         usuarioRepository.save(ue);
         return dto;
+    }
+
+    @Override
+    public UsuarioDTO update(Integer id, UsuarioDTO dto) {
+        UsuarioEntity entity = usuarioRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+        entity.setNome(dto.getNome());
+        entity.setEmail(dto.getEmail());
+        entity.setSenha(encoder.encode(dto.getSenha()));
+        entity.setTelefone(dto.getTelefone());
+
+        UsuarioEntity atualizado = usuarioRepository.save(entity);
+        return UsuarioDTO.fromEntity(atualizado);
+    }
+
+    @Override
+    public void delete(Integer id) {
+        UsuarioEntity entity = usuarioRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+        usuarioRepository.delete(entity);
+
     }
 }

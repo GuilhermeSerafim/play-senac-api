@@ -60,6 +60,9 @@ public class SecurityConfig {
 						.requestMatchers("/usuarios/cadastro").permitAll()
 						.requestMatchers("/login").permitAll()
 						.requestMatchers(HttpMethod.GET, "/quadras").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/usuarios/buscar").permitAll()
+                                .requestMatchers(HttpMethod.PUT, "/usuarios/atualizar/**").permitAll()
+                                .requestMatchers(HttpMethod.DELETE, "/usuarios/deletar/**").permitAll()
 						
 						.requestMatchers("/reservas/**").permitAll()
 						
