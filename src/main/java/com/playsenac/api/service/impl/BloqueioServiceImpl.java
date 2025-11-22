@@ -47,6 +47,9 @@ public class BloqueioServiceImpl implements BloqueioService {
         if (entity.getQuadra() != null) {
             dto.setIdQuadra(entity.getQuadra().getId_quadra());
         }
+        if (entity.getUsuarioBloqueador() != null) {
+            dto.setIdUsuario(entity.getUsuarioBloqueador().getId_usuario());
+        }
         return dto;
     }
     
@@ -58,6 +61,9 @@ public class BloqueioServiceImpl implements BloqueioService {
         
         if (entity.getQuadra() != null) {
             dto.setIdQuadra(entity.getQuadra().getId_quadra());
+        }
+        if (entity.getUsuarioBloqueador() != null) {
+            dto.setIdUsuario(entity.getUsuarioBloqueador().getId_usuario());
         }
         return dto;
     }
