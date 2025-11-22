@@ -76,27 +76,19 @@ public class ReservaServiceImpl implements ReservaService {
     }
 
     @Override
-    @Transactional // Garante que tudo salva ou nada salva
+    @Transactional
     public ReservaDTO addNew(ReservaDTO dto) {
-        // 1. Converte DTO para Entity e busca Usuario/Quadra no banco
         ReservaEntity entity = toEntity(dto);
         
-        // 2. Salva a Reserva primeiro (para o banco gerar o ID_RESERVA)
         entity = reservaRepository.save(entity);
         
-        // 3. Trata os Convidados
         if(dto.getConvidados() != null && !dto.getConvidados().isEmpty()) {
             for(ConvidadoEntity convidado : dto.getConvidados()) {
                 
-                // O PULO DO GATO ESTÁ AQUI:
-                // Dizemos ao convidado: "Sua reserva é esta que acabei de salvar (entity)"
                 convidado.setReserva(entity); 
-                
-                // Salvamos o convidado
                 convidadoRepository.save(convidado);
             }
             
-            // Atualiza a lista na entidade principal para o retorno ficar correto
             entity.setConvidados(dto.getConvidados());
         }
         
@@ -104,7 +96,7 @@ public class ReservaServiceImpl implements ReservaService {
     }
 
     @Override
-    public ReservaDTO updateHorario(Integer id, LocalDateTime novaDataHoraInicio, LocalDateTime novaDataHoraFim) {
+    public ReservaDTO update(Integer id, LocalDateTime novaDataHoraInicio, LocalDateTime novaDataHoraFim) {
         return null;
     }
 

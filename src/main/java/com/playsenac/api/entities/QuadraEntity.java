@@ -1,9 +1,9 @@
 package com.playsenac.api.entities;
 
 import jakarta.persistence.*;
-
 import java.util.ArrayList;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "quadra")
@@ -25,8 +25,13 @@ public class QuadraEntity {
     @Column(name = "imagem_url") 
     private String imagemUrl;
 
-    @OneToMany(mappedBy = "quadra")
+    @OneToMany(mappedBy = "quadra", cascade = CascadeType.REMOVE, orphanRemoval = true) 
+    @JsonIgnore
     private List<ReservaEntity> reservas;
+    
+    @OneToMany(mappedBy = "quadra", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @JsonIgnore
+    private List<BloqueioEntity> bloqueios;
 
     @OneToMany(mappedBy = "quadra", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DisponibilidadeEntity> disponibilidades = new ArrayList<>();
@@ -91,6 +96,14 @@ public class QuadraEntity {
 
     public void setReservas(List<ReservaEntity> reservas) {
         this.reservas = reservas;
+    }
+
+    public List<BloqueioEntity> getBloqueios() {
+        return bloqueios;
+    }
+
+    public void setBloqueios(List<BloqueioEntity> bloqueios) {
+        this.bloqueios = bloqueios;
     }
 
 	public List<DisponibilidadeEntity> getDisponibilidades() {

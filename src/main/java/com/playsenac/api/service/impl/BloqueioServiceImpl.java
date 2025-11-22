@@ -21,7 +21,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 @Service
-public class BloqueioServiceImpl implements BloqueioService{
+public class BloqueioServiceImpl implements BloqueioService {
 
     @Autowired
     private BloqueioRepository repository;
@@ -37,47 +37,59 @@ public class BloqueioServiceImpl implements BloqueioService{
 
     @Override
     public BloqueioDTO findById(Integer id){
-        BloqueioEntity entity = repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Bloqueio não encontrado: " + id));
+        BloqueioEntity entity = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Bloqueio não encontrado: " + id));
 
-        return BloqueioDTO.fromEntity(entity);
+        return toDto(entity);
     }
 
     @Override
     public List<BloqueioDTO> findAll() {
-        return repository.findAll().stream().map(BloqueioDTO::fromEntity).collect(Collectors.toList());
+        return repository.findAll().stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
     }
 
-    @Transactional
-    @Override
-    public BloqueioDTO addNew(BloqueioDTO dto) {
-        QuadraEntity quadra = quadraRepository.findById(dto.getIdQuadra()).orElseThrow(() -> new EntityNotFoundException("Quadra não encontrada"));
-        UsuarioEntity usuario = usuarioRepository.findById(dto.getIdUsuario()).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+    private BloqueioDTO toDto(BloqueioEntity entity) {
+        BloqueioDTO dto = new BloqueioDTO();
+        dto.setDataHoraInicio(entity.getDataHoraInicio());
+        dto.setDataHoraFim(entity.getDataHoraFim());
+        dto.setMotivo(entity.getMotivo());
         
-        List<ReservaEntity> reservasConflitantes = reservaRepository.findByQuadraAndDataHoraInicioBeforeAndDataHoraFimAfter(
-            quadra, 
-            dto.getDataHoraFim(), 
-            dto.getDataHoraInicio()
+        if (entity.getQuadra() != null) {
+            dto.setIdQuadra(entity.getQuadra().getId_quadra());
+        }
+        return dto;
+    }
+
+    @Override
+    @Transactional
+    public BloqueioDTO addNew(BloqueioDTO dto) {
+        QuadraEntity quadra = quadraRepository.findById(dto.getIdQuadra())
+                .orElseThrow(() -> new EntityNotFoundException("Quadra não encontrada"));
+        
+        UsuarioEntity usuario = usuarioRepository.findById(dto.getIdUsuario())
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+
+        List<ReservaEntity> reservasConflitantes = reservaRepository.findConflitos(
+                dto.getIdQuadra(),
+                dto.getDataHoraInicio(),
+                dto.getDataHoraFim()
         );
 
         if (!reservasConflitantes.isEmpty()) {
-            throw new  IllegalStateException("Não é possivel bloquear Horario. Há " + reservasConflitantes.size() +  "reservas ativas no periodo");
-        } else {
-
-            BloqueioEntity entity = new BloqueioEntity();
-            entity.setDataHoraInicio(dto.getDataHoraInicio());
-            entity.setDataHoraFim(dto.getDataHoraFim());
-            entity.setMotivo(dto.getMotivo());
-            entity.setQuadraBloqueada(quadra);
-            entity.setUsuarioBloqueador(usuario);
-            
-            BloqueioEntity entidadeSalva = repository.save(entity);
-    
-            quadraRepository.save(quadra);
-            
-            return BloqueioDTO.fromEntity(entidadeSalva);
+            reservaRepository.deleteAll(reservasConflitantes);
         }
 
-    }
+        BloqueioEntity entity = new BloqueioEntity();
+        entity.setQuadra(quadra);
+        entity.setUsuarioBloqueador(usuario);
+        entity.setDataHoraInicio(dto.getDataHoraInicio());
+        entity.setDataHoraFim(dto.getDataHoraFim());
+        entity.setMotivo(dto.getMotivo());
 
-   
+        entity = repository.save(entity);
+
+        return toDto(entity);
+    }
 }
