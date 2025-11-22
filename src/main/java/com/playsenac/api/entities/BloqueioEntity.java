@@ -26,16 +26,16 @@ public class BloqueioEntity {
     
     @ManyToOne
     @JoinColumn(name = "fk_quadra", nullable = false)
-    private QuadraEntity quadraBloqueada;
+    private QuadraEntity quadra;
 
     public BloqueioEntity() { }
     
-    public BloqueioEntity(LocalDateTime dataHoraInicio, LocalDateTime dataHoraFim, String motivo, UsuarioEntity usuarioBloqueador, QuadraEntity quadraBloqueada) {
+    public BloqueioEntity(LocalDateTime dataHoraInicio, LocalDateTime dataHoraFim, String motivo, UsuarioEntity usuarioBloqueador, QuadraEntity quadra) {
         this.dataHoraInicio = dataHoraInicio;
         this.dataHoraFim = dataHoraFim;
         this.motivo = motivo;
         this.usuarioBloqueador = usuarioBloqueador;
-        this.quadraBloqueada = quadraBloqueada;
+        this.quadra = quadra;
     }
 
 	public Integer getId_bloqueio() {
@@ -78,13 +78,11 @@ public class BloqueioEntity {
 		this.usuarioBloqueador = usuarioBloqueador;
 	}
 
-	public QuadraEntity getQuadraBloqueada() {
-		return quadraBloqueada;
+	public QuadraEntity getQuadra() {
+		return quadra;
 	}
 
-	public void setQuadraBloqueada(QuadraEntity quadraBloqueada) {
-		this.quadraBloqueada = quadraBloqueada;
+	public void setQuadra(QuadraEntity quadra) {
+		this.quadra = quadra;
 	}
-
-
 }

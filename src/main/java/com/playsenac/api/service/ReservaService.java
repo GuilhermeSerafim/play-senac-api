@@ -13,7 +13,7 @@ public interface ReservaService {
 
     ReservaDTO addNew(ReservaDTO dto);
 
-    ReservaDTO updateHorario(Integer id, LocalDateTime novaDataHoraInicio, LocalDateTime novaDataHoraFim);
+    ReservaDTO update(Integer id, LocalDateTime novaDataHoraInicio, LocalDateTime novaDataHoraFim);
 
     void delete (Integer id);
 }

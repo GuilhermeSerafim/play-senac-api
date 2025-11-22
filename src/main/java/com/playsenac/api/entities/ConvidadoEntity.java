@@ -1,5 +1,9 @@
 package com.playsenac.api.entities;
 
+import java.util.Collections;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -28,8 +32,11 @@ public class ConvidadoEntity {
 	
 	@OneToOne
 	@JoinColumn(name = "fk_reserva", nullable = false)
+	@JsonIgnore
 	private ReservaEntity reserva;
 
+	public ConvidadoEntity() { } 
+	
 	public ConvidadoEntity(String nome, String telefone, String email, ReservaEntity reserva) {
 		this.nome = nome;
 		this.telefone = telefone;
