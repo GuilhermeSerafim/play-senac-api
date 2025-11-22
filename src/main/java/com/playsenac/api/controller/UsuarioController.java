@@ -4,6 +4,7 @@ import com.playsenac.api.dto.UsuarioDTO;
 import com.playsenac.api.entities.UsuarioEntity;
 import com.playsenac.api.service.UsuarioService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,11 +12,11 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
-@SecurityRequirement(name = "bearer-jwt")
+
 @RestController
 @RequestMapping("/usuarios")
 public class UsuarioController {
-	
+
     @Autowired
     private UsuarioService service;
 
@@ -37,6 +38,17 @@ public class UsuarioController {
                 .toUri();
         return ResponseEntity.created(location).build();
 
+    }
 
+    @PutMapping("/atualizar/{id}")
+    public ResponseEntity<UsuarioDTO> update(@PathVariable Integer id, @RequestBody @Valid UsuarioDTO dto) {
+        UsuarioDTO atualizado = service.update(id, dto);
+        return ResponseEntity.ok(atualizado);
+    }
+
+    @DeleteMapping("/deletar/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

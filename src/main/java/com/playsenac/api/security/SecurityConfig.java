@@ -61,6 +61,8 @@ public class SecurityConfig {
 						.requestMatchers("/login").permitAll()
 						.requestMatchers(HttpMethod.GET, "/quadras").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/usuarios/buscar").permitAll()
+                                .requestMatchers(HttpMethod.PUT, "/usuarios/atualizar/**").permitAll()
+                                .requestMatchers(HttpMethod.DELETE, "/usuarios/deletar/**").permitAll()
 						
 						//requisições exclusivas do administrador
 						.requestMatchers("/quadras/**").hasAuthority("ADMIN")

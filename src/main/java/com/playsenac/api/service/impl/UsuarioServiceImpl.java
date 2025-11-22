@@ -48,4 +48,25 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuarioRepository.save(ue);
         return dto;
     }
+
+    @Override
+    public UsuarioDTO update(Integer id, UsuarioDTO dto) {
+        UsuarioEntity entity = usuarioRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+        entity.setNome(dto.getNome());
+        entity.setEmail(dto.getEmail());
+        entity.setSenha(encoder.encode(dto.getSenha()));
+        entity.setTelefone(dto.getTelefone());
+
+        UsuarioEntity atualizado = usuarioRepository.save(entity);
+        return UsuarioDTO.fromEntity(atualizado);
+    }
+
+    @Override
+    public void delete(Integer id) {
+        UsuarioEntity entity = usuarioRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+        usuarioRepository.delete(entity);
+
+    }
 }
