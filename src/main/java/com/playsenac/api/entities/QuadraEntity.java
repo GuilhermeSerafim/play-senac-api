@@ -41,10 +41,6 @@ public class QuadraEntity {
         this.imagemUrl = imagemUrl;
     }
 
-    public Integer getId() {
-        return id_quadra;
-    }
-
     public void setId(Integer id) {
         this.id_quadra = id;
     }

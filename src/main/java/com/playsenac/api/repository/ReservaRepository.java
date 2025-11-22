@@ -10,11 +10,10 @@ import com.playsenac.api.entities.ReservaEntity;
 
 public interface ReservaRepository extends JpaRepository<ReservaEntity, Integer> {
 
-    List<ReservaEntity> findByQuadraAndStatusAndDataHoraInicioBeforeAndDataHoraFimAfter(
-        QuadraEntity quadra,
-        boolean status,
-        LocalDateTime dataHoraFimDoBloqueio,
-        LocalDateTime dataHoraInicioDoBloqueio
-    );
+	List<ReservaEntity> findByQuadraAndDataHoraInicioBeforeAndDataHoraFimAfter(
+		    QuadraEntity quadra,
+		    LocalDateTime dataFim,
+		    LocalDateTime dataInicio
+		);
 
 }

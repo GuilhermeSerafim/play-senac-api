@@ -61,13 +61,15 @@ public class SecurityConfig {
 						.requestMatchers("/login").permitAll()
 						.requestMatchers(HttpMethod.GET, "/quadras").permitAll()
 						
+						.requestMatchers("/reservas/**").permitAll()
+						
 						//requisições exclusivas do administrador
 						.requestMatchers("/quadras/**").hasAuthority("ADMIN")
 						.requestMatchers("/bloqueios/**").hasAuthority("ADMIN")
-						.requestMatchers(HttpMethod.GET, "/reservas/**").hasAuthority("ADMIN")
 						
 						//requisições exclusivas do usuario
-						.requestMatchers("/reservas/**").hasAuthority("COMUM")
+						.requestMatchers(HttpMethod.PUT ,"/usuarios/**").hasAuthority("COMUM")
+						.requestMatchers(HttpMethod.DELETE ,"/usuarios/**").hasAuthority("COMUM")
 						
 						.anyRequest().authenticated()
 						)

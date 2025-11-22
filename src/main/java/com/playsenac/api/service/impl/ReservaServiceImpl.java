@@ -1,9 +1,11 @@
 package com.playsenac.api.service.impl;
 
 import com.playsenac.api.dto.ReservaDTO;
+import com.playsenac.api.entities.ConvidadoEntity;
 import com.playsenac.api.entities.QuadraEntity;
 import com.playsenac.api.entities.ReservaEntity;
 import com.playsenac.api.entities.UsuarioEntity;
+import com.playsenac.api.repository.ConvidadoRepository;
 import com.playsenac.api.repository.QuadraRepository;
 import com.playsenac.api.repository.ReservaRepository;
 import com.playsenac.api.repository.UsuarioRepository;
@@ -28,13 +30,41 @@ public class ReservaServiceImpl implements ReservaService {
 
     @Autowired
     private QuadraRepository quadraRepository;
+    
+    @Autowired
+    private ConvidadoRepository convidadoRepository;
 
+    public ReservaDTO toDto(ReservaEntity entity) {
+    	ReservaDTO dto = new ReservaDTO();
+    	dto.setDataHoraInicio(entity.getDataHoraInicio());
+    	dto.setDataHoraFim(entity.getDataHoraFim());
+    	dto.setIdUsuario(entity.getUsuario().getId_usuario());
+    	dto.setIdQuadra(entity.getQuadra().getId_quadra());
+    	dto.setConvidados(entity.getConvidados());
+    	return dto;
+    }
+    
+    public ReservaEntity toEntity(ReservaDTO dto) {
+    	UsuarioEntity usuario = usuarioRepository.findById(dto.getIdUsuario())
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado com ID: " + dto.getIdUsuario()));
+    	QuadraEntity quadra = quadraRepository.findById(dto.getIdQuadra())
+                .orElseThrow(() -> new EntityNotFoundException("Quadra não encontrada com ID: " + dto.getIdQuadra()));
+    	ReservaEntity entity = new ReservaEntity();
+    	if(usuario != null && quadra != null) {
+        	entity.setDataHoraInicio(dto.getDataHoraInicio());
+        	entity.setDataHoraFim(dto.getDataHoraFim());
+        	entity.setQuadra(quadra);
+        	entity.setUsuario(usuario);
+    	}
+    	return entity;
+    }
+    
     @Override
     @Transactional(readOnly = true)
     public List<ReservaDTO> findAll() {
         return reservaRepository.findAll()
                 .stream()
-                .map(ReservaDTO:: fromEntity)
+                .map(this::toDto)
                 .toList();
     }
 
@@ -42,25 +72,35 @@ public class ReservaServiceImpl implements ReservaService {
     public ReservaDTO findById(Integer id) {
         ReservaEntity entity = reservaRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Reserva não encontrada para o ID: " + id));
-        return ReservaDTO.fromEntity(entity);
+        return toDto(entity);
     }
 
     @Override
+    @Transactional // Garante que tudo salva ou nada salva
     public ReservaDTO addNew(ReservaDTO dto) {
-        UsuarioEntity usuarioEntity = usuarioRepository.findById(dto.getIdUsuario())
-                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado para o ID: " + dto.getIdUsuario()));
-
-        QuadraEntity quadraEntity = quadraRepository.findById(dto.getIdQuadra())
-                .orElseThrow(() -> new EntityNotFoundException("Quadra não encontrada para o ID: " + dto.getIdQuadra()));
-
-        ReservaEntity entity = new ReservaEntity();
-        entity.setDataHoraInicio(dto.getDataHoraInicio());
-        entity.setDataHoraFim(dto.getDataHoraFim());
-        entity.setStatus(true);
-        entity.setUsuario(usuarioEntity);
-        entity.setQuadra(quadraEntity);
-        ReservaEntity savedEntity = reservaRepository.save(entity);
-        return ReservaDTO.fromEntity(savedEntity);
+        // 1. Converte DTO para Entity e busca Usuario/Quadra no banco
+        ReservaEntity entity = toEntity(dto);
+        
+        // 2. Salva a Reserva primeiro (para o banco gerar o ID_RESERVA)
+        entity = reservaRepository.save(entity);
+        
+        // 3. Trata os Convidados
+        if(dto.getConvidados() != null && !dto.getConvidados().isEmpty()) {
+            for(ConvidadoEntity convidado : dto.getConvidados()) {
+                
+                // O PULO DO GATO ESTÁ AQUI:
+                // Dizemos ao convidado: "Sua reserva é esta que acabei de salvar (entity)"
+                convidado.setReserva(entity); 
+                
+                // Salvamos o convidado
+                convidadoRepository.save(convidado);
+            }
+            
+            // Atualiza a lista na entidade principal para o retorno ficar correto
+            entity.setConvidados(dto.getConvidados());
+        }
+        
+        return toDto(entity);
     }
 
     @Override
