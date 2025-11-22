@@ -25,18 +25,22 @@ public class LoginController {
     private JwtService service;
 
     @PostMapping("/login")
-    public ResponseEntity<RespostaLogin> fazerLogin(@RequestBody Credencial credencial) {
-        Authentication auth = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        credencial.email(),
-                        credencial.senha()));
-        if (auth == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    public ResponseEntity<?> fazerLogin(@RequestBody Credencial credencial) {
+        try {
+            Authentication auth = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            credencial.email(),
+                            credencial.senha()));
+
+            UsuarioSistema usuario = (UsuarioSistema) auth.getPrincipal();
+            String jwt = service.gerarTokenJwt(usuario);
+            String role = usuario.getRole().getNome();
+
+            return ResponseEntity.ok(new RespostaLogin(usuario.getEmail(), role, jwt));
+
+        } catch (org.springframework.security.core.AuthenticationException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuário ou senha inválidos");
         }
-        UsuarioSistema usuario = (UsuarioSistema) auth.getPrincipal();
-        String jwt = service.gerarTokenJwt(usuario);
-        String role = usuario.getRole().getNome();
-        return ResponseEntity.ok().body(new RespostaLogin(usuario.getEmail(), role, jwt));
     }
 
     public record Credencial(String email, String senha) {

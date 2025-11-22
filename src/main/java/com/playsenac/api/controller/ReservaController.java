@@ -52,5 +52,11 @@ public class ReservaController {
         URI location = URI.create("/reservas/" + novaReserva.getDataHoraInicio());
         return ResponseEntity.created(location).body(novaReserva);
     }
+    
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+    	service.delete(id);
+    	return ResponseEntity.noContent().build();
+    }
 
 }
