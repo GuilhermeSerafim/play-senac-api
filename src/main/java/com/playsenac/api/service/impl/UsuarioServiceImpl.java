@@ -6,6 +6,9 @@ import com.playsenac.api.repository.UsuarioRepository;
 import com.playsenac.api.security.UsuarioSistema;
 import com.playsenac.api.service.UsuarioService;
 import jakarta.persistence.EntityNotFoundException;
+
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -60,7 +63,11 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     @Transactional
-    public UsuarioDTO addNew(UsuarioDTO dto) {
+    public UsuarioDTO addNew(UsuarioDTO dto) {        
+        if (usuarioRepository.findByEmail(dto.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("O email já está cadastrado no sistema.");
+        }
+        
         UsuarioEntity ue = toEntity(dto);
         String senhaCriptografada = encoder.encode(ue.getSenha());
         ue.setSenha(senhaCriptografada);
@@ -72,6 +79,13 @@ public class UsuarioServiceImpl implements UsuarioService {
     public UsuarioDTO update(Integer id, UsuarioDTO dto) {
         UsuarioEntity entity = usuarioRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+        
+        Optional<UsuarioEntity> emailExistente = usuarioRepository.findByEmail(dto.getEmail());
+
+        if (emailExistente.isPresent() && !emailExistente.get().getId_usuario().equals(id)) {
+            throw new IllegalArgumentException("O novo email já está sendo usado por outro usuário.");
+        }
+        
         entity.setNome(dto.getNome());
         entity.setEmail(dto.getEmail());
         entity.setSenha(encoder.encode(dto.getSenha()));

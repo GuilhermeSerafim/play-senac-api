@@ -30,22 +30,28 @@ public class UsuarioController {
 
 
     @PostMapping("/cadastro")
-    public ResponseEntity<UsuarioDTO> addNew(@RequestBody UsuarioDTO dto) {
-
-        UsuarioDTO u = service.addNew(dto);
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequestUri()
-                .path("/{nome}")
-                .buildAndExpand(u.getNome())
-                .toUri();
-        return ResponseEntity.created(location).build();
-
+    public ResponseEntity<?> addNew(@RequestBody UsuarioDTO dto) {
+    	try {
+            UsuarioDTO u = service.addNew(dto);
+            URI location = ServletUriComponentsBuilder
+                    .fromCurrentRequestUri()
+                    .path("/{nome}")
+                    .buildAndExpand(u.getNome())
+                    .toUri();
+            return ResponseEntity.created(location).build();
+		} catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
     }
 
     @PutMapping("/atualizar/{id}")
-    public ResponseEntity<UsuarioDTO> update(@PathVariable Integer id, @RequestBody @Valid UsuarioDTO dto) {
-        UsuarioDTO atualizado = service.update(id, dto);
-        return ResponseEntity.ok(atualizado);
+    public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody @Valid UsuarioDTO dto) {
+    	try {
+            UsuarioDTO atualizado = service.update(id, dto);
+            return ResponseEntity.ok(atualizado);
+		} catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
     }
 
     @DeleteMapping("/deletar/{id}")
