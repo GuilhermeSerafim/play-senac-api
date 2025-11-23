@@ -162,10 +162,44 @@ public class ReservaServiceImpl implements ReservaService {
         return toDto(entity);
     }
 
+//    @Override
+//    public void delete(Integer id) {
+//    	ReservaEntity entity = reservaRepository.findById(id)
+//    			.orElseThrow(() -> new EntityNotFoundException("reserva não encontrada para o id " + id));
+//    	reservaRepository.delete(entity);
+//    }
+    
     @Override
+    @Transactional
     public void delete(Integer id) {
-    	ReservaEntity entity = reservaRepository.findById(id)
-    			.orElseThrow(() -> new EntityNotFoundException("reserva não encontrada para o id " + id));
-    	reservaRepository.delete(entity);
+        ReservaEntity entity = reservaRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Reserva não encontrada para o id " + id));
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AccessDeniedException("Usuário não autenticado.");
+        }
+
+        Object principal = authentication.getPrincipal();
+        UsuarioSistema usuarioLogado;
+
+        try {
+            usuarioLogado = (UsuarioSistema) principal;
+        } catch (ClassCastException e) {
+            throw new RuntimeException("Erro interno de segurança: Tipo de usuário inválido na sessão.");
+        }
+
+        String role = usuarioLogado.getRole().getNome();
+
+        if (!"ADMIN".equalsIgnoreCase(role)) { 
+            Integer idDonoDaReserva = entity.getUsuario().getId_usuario();
+            Integer idUsuarioLogado = usuarioLogado.getId_usuario();
+
+            if (!idDonoDaReserva.equals(idUsuarioLogado)) {
+                throw new AccessDeniedException("Acesso negado: Você só pode excluir suas próprias reservas.");
+            }
+        }
+        reservaRepository.delete(entity);
     }
 }
