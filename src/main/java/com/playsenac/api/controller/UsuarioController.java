@@ -30,7 +30,7 @@ public class UsuarioController {
 
 
     @PostMapping("/cadastro")
-    public ResponseEntity<?> addNew(@RequestBody UsuarioDTO dto) {
+    public ResponseEntity<?> addNew(@RequestBody @Valid UsuarioDTO dto) {
     	try {
             UsuarioDTO u = service.addNew(dto);
             URI location = ServletUriComponentsBuilder
