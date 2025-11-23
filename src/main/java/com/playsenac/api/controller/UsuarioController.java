@@ -44,10 +44,10 @@ public class UsuarioController {
 		}
     }
 
-    @PutMapping("/atualizar/{id}")
-    public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody @Valid UsuarioDTO dto) {
+    @PutMapping("/atualizar")
+    public ResponseEntity<?> update(@RequestBody @Valid UsuarioDTO dto) {
     	try {
-            UsuarioDTO atualizado = service.update(id, dto);
+            UsuarioDTO atualizado = service.update(dto);
             return ResponseEntity.ok(atualizado);
 		} catch (IllegalArgumentException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
