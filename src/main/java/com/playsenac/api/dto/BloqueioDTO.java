@@ -19,10 +19,10 @@ public class BloqueioDTO {
     private String motivo;
     
     @NotNull
-    private int idUsuario;
+    private Integer idUsuario;
     
     @NotNull
-    private int idQuadra;
+    private Integer idQuadra;
 
     public BloqueioDTO() {
     }
@@ -59,7 +59,7 @@ public class BloqueioDTO {
 		this.motivo = motivo;
 	}
 
-	public int getIdUsuario() {
+	public Integer getIdUsuario() {
 		return idUsuario;
 	}
 
@@ -67,7 +67,7 @@ public class BloqueioDTO {
 		this.idUsuario = idUsuario;
 	}
 
-	public int getIdQuadra() {
+	public Integer getIdQuadra() {
 		return idQuadra;
 	}
 

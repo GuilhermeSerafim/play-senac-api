@@ -12,4 +12,8 @@ public interface BloqueioService {
     BloqueioDTOId findById(Integer id);
 
     BloqueioDTO addNew(BloqueioDTO dto);
+    
+    BloqueioDTO update(Integer id, BloqueioDTO dto);
+    
+    void delete(Integer id);
 }
