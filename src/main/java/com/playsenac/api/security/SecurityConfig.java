@@ -64,12 +64,12 @@ public class SecurityConfig {
 						//requisições para ambos
 						.requestMatchers(HttpMethod.GET, "/reservas/**").hasAnyAuthority("ADMIN", "COMUM")
 						.requestMatchers(HttpMethod.POST, "/reservas/**").hasAnyAuthority("ADMIN", "COMUM")
+						.requestMatchers(HttpMethod.DELETE, "/reservas/**").hasAnyAuthority("ADMIN", "COMUM")
 						
 						//requisições exclusivas do administrador
 						.requestMatchers("/quadras/**").hasAuthority("ADMIN")
 						.requestMatchers("/bloqueios/**").hasAuthority("ADMIN")
 						.requestMatchers(HttpMethod.PUT, "/reservas/**").hasAuthority("ADMIN")
-						.requestMatchers(HttpMethod.DELETE, "/reservas/**").hasAuthority("ADMIN")
 						
 						//requisições exclusivas do usuario
 						.requestMatchers(HttpMethod.PUT ,"/usuarios/**").hasAuthority("COMUM")
