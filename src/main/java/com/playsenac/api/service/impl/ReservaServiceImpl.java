@@ -26,180 +26,184 @@ import java.util.stream.Collectors;
 @Service
 public class ReservaServiceImpl implements ReservaService {
 
-    @Autowired
-    private ReservaRepository reservaRepository;
+	@Autowired
+	private ReservaRepository reservaRepository;
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+	@Autowired
+	private UsuarioRepository usuarioRepository;
 
-    @Autowired
-    private QuadraRepository quadraRepository;
-    
-    @Autowired
-    private ConvidadoRepository convidadoRepository;
+	@Autowired
+	private QuadraRepository quadraRepository;
 
-    public ReservaDTO toDto(ReservaEntity entity) {
-    	ReservaDTO dto = new ReservaDTO();
-    	dto.setDataHoraInicio(entity.getDataHoraInicio());
-    	dto.setDataHoraFim(entity.getDataHoraFim());
-    	dto.setIdUsuario(entity.getUsuario().getId_usuario());
-    	dto.setIdQuadra(entity.getQuadra().getId_quadra());
-    	dto.setConvidados(entity.getConvidados());
-    	return dto;
-    }
-    
-    public ReservaDTOId toDtoId(ReservaEntity entity) {
-    	ReservaDTOId dto = new ReservaDTOId();
-    	dto.setId(entity.getId_reserva());
-    	dto.setDataHoraInicio(entity.getDataHoraInicio());
-    	dto.setDataHoraFim(entity.getDataHoraFim());
-    	dto.setIdUsuario(entity.getUsuario().getId_usuario());
-    	dto.setIdQuadra(entity.getQuadra().getId_quadra());
-    	dto.setConvidados(entity.getConvidados());
-    	return dto;
-    }
-    
-    public ReservaEntity toEntity(ReservaDTO dto) {
-    	UsuarioEntity usuario = usuarioRepository.findById(dto.getIdUsuario())
-                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado com ID: " + dto.getIdUsuario()));
-    	QuadraEntity quadra = quadraRepository.findById(dto.getIdQuadra())
-                .orElseThrow(() -> new EntityNotFoundException("Quadra não encontrada com ID: " + dto.getIdQuadra()));
-    	ReservaEntity entity = new ReservaEntity();
-    	if(usuario != null && quadra != null) {
-        	entity.setDataHoraInicio(dto.getDataHoraInicio());
-        	entity.setDataHoraFim(dto.getDataHoraFim());
-        	entity.setQuadra(quadra);
-        	entity.setUsuario(usuario);
-    	}
-    	return entity;
-    }
-    
-    @Override
-    @Transactional(readOnly = true)
-    public List<ReservaDTOId> findAll() {
-        return reservaRepository.findAll()
-                .stream()
-                .map(this::toDtoId)
-                .toList();
-    }
+	@Autowired
+	private ConvidadoRepository convidadoRepository;
 
-    @Override
-    public ReservaDTOId findById(Integer id) {
-        ReservaEntity entity = reservaRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Reserva não encontrada para o ID: " + id));
-        return toDtoId(entity);
-    }
+	public ReservaDTO toDto(ReservaEntity entity) {
+		ReservaDTO dto = new ReservaDTO();
+		dto.setDataHoraInicio(entity.getDataHoraInicio());
+		dto.setDataHoraFim(entity.getDataHoraFim());
+		dto.setIdQuadra(entity.getQuadra().getId_quadra());
+		dto.setConvidados(entity.getConvidados());
+		return dto;
+	}
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<ReservaDTOId> findMinhasReservas() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        
-        if (auth == null || !auth.isAuthenticated()) {
-            throw new AccessDeniedException("Usuário não autenticado.");
-        }
+	public ReservaDTOId toDtoId(ReservaEntity entity) {
+		ReservaDTOId dto = new ReservaDTOId();
+		dto.setId(entity.getId_reserva());
+		dto.setDataHoraInicio(entity.getDataHoraInicio());
+		dto.setDataHoraFim(entity.getDataHoraFim());
+		dto.setIdUsuario(entity.getUsuario().getId_usuario());
+		dto.setIdQuadra(entity.getQuadra().getId_quadra());
+		dto.setConvidados(entity.getConvidados());
+		return dto;
+	}
 
-        UsuarioSistema usuarioLogado = (UsuarioSistema) auth.getPrincipal();
-        Integer idLogado = usuarioLogado.getId_usuario();
+	public ReservaEntity toEntity(ReservaDTO dto) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        List<ReservaEntity> reservas = reservaRepository.findPorUsuario(idLogado);
+		if (auth == null || !auth.isAuthenticated()) {
+			throw new AccessDeniedException("Usuário não autenticado.");
+		}
 
-        return reservas.stream()
-                .map(this::toDtoId)
-                .collect(Collectors.toList());
-    }
-    
-    @Override
-    @Transactional
-    public ReservaDTO addNew(ReservaDTO dto) {
-        ReservaEntity entity = toEntity(dto);
-        
-        entity = reservaRepository.save(entity);
-        
-        if(dto.getConvidados() != null && !dto.getConvidados().isEmpty()) {
-            for(ConvidadoEntity convidado : dto.getConvidados()) {
-                
-                convidado.setReserva(entity); 
-                convidadoRepository.save(convidado);
-            }
-            
-            entity.setConvidados(dto.getConvidados());
-        }
-        
-        return toDto(entity);
-    }
+		UsuarioSistema usuarioLogado = (UsuarioSistema) auth.getPrincipal();
+		Integer idLogado = usuarioLogado.getId_usuario();
+		UsuarioEntity usuario = usuarioRepository.findById(idLogado)
+				.orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+		QuadraEntity quadra = quadraRepository.findById(dto.getIdQuadra())
+				.orElseThrow(() -> new EntityNotFoundException("Quadra não encontrada com ID: " + dto.getIdQuadra()));
+		ReservaEntity entity = new ReservaEntity();
+		if (usuario != null && quadra != null) {
+			entity.setDataHoraInicio(dto.getDataHoraInicio());
+			entity.setDataHoraFim(dto.getDataHoraFim());
+			entity.setQuadra(quadra);
+			entity.setUsuario(usuario);
+		}
+		return entity;
+	}
 
-    @Override
-    @Transactional
-    public ReservaDTO update(Integer id, ReservaDTO dto) {
-        ReservaEntity entity = reservaRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Reserva não encontrada para o ID: " + id));
+	@Override
+	@Transactional(readOnly = true)
+	public List<ReservaDTOId> findAll() {
+		return reservaRepository.findAll().stream().map(this::toDtoId).toList();
+	}
 
-        entity.setDataHoraInicio(dto.getDataHoraInicio());
-        entity.setDataHoraFim(dto.getDataHoraFim());
-        if (!(entity.getUsuario().getId_usuario() == (dto.getIdUsuario()))) {
-            UsuarioEntity novoUsuario = usuarioRepository.findById(dto.getIdUsuario())
-                    .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado com ID: " + dto.getIdUsuario()));
-            entity.setUsuario(novoUsuario);
-        }
+	@Override
+	public ReservaDTOId findById(Integer id) {
+		ReservaEntity entity = reservaRepository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("Reserva não encontrada para o ID: " + id));
+		return toDtoId(entity);
+	}
 
-        if (!entity.getQuadra().getId_quadra().equals(dto.getIdQuadra())) {
-            QuadraEntity novaQuadra = quadraRepository.findById(dto.getIdQuadra())
-                    .orElseThrow(() -> new EntityNotFoundException("Quadra não encontrada com ID: " + dto.getIdQuadra()));
-            entity.setQuadra(novaQuadra);
-        }
+	@Override
+	@Transactional(readOnly = true)
+	public List<ReservaDTOId> findMinhasReservas() {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        if (dto.getConvidados() != null) {
-            entity.getConvidados().clear();
+		if (auth == null || !auth.isAuthenticated()) {
+			throw new AccessDeniedException("Usuário não autenticado.");
+		}
 
-            for (ConvidadoEntity convidado : dto.getConvidados()) {
-                convidado.setReserva(entity); 
-                entity.getConvidados().add(convidado);
-            }
-        }
-        entity = reservaRepository.save(entity);
+		UsuarioSistema usuarioLogado = (UsuarioSistema) auth.getPrincipal();
+		Integer idLogado = usuarioLogado.getId_usuario();
 
-        return toDto(entity);
-    }
+		List<ReservaEntity> reservas = reservaRepository.findPorUsuario(idLogado);
 
-//    @Override
-//    public void delete(Integer id) {
-//    	ReservaEntity entity = reservaRepository.findById(id)
-//    			.orElseThrow(() -> new EntityNotFoundException("reserva não encontrada para o id " + id));
-//    	reservaRepository.delete(entity);
-//    }
-    
-    @Override
-    @Transactional
-    public void delete(Integer id) {
-        ReservaEntity entity = reservaRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Reserva não encontrada para o id " + id));
+		return reservas.stream().map(this::toDtoId).collect(Collectors.toList());
+	}
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new AccessDeniedException("Usuário não autenticado.");
-        }
+	@Override
+	@Transactional
+	public ReservaDTO addNew(ReservaDTO dto) {
+		ReservaEntity entity = toEntity(dto);
 
-        Object principal = authentication.getPrincipal();
-        UsuarioSistema usuarioLogado;
+		entity = reservaRepository.save(entity);
 
-        try {
-            usuarioLogado = (UsuarioSistema) principal;
-        } catch (ClassCastException e) {
-            throw new RuntimeException("Erro interno de segurança: Tipo de usuário inválido na sessão.");
-        }
+		if (dto.getConvidados() != null && !dto.getConvidados().isEmpty()) {
+			for (ConvidadoEntity convidado : dto.getConvidados()) {
 
-        String role = usuarioLogado.getRole().getNome();
+				convidado.setReserva(entity);
+				convidadoRepository.save(convidado);
+			}
 
-        if (!"ADMIN".equalsIgnoreCase(role)) { 
-            Integer idDonoDaReserva = entity.getUsuario().getId_usuario();
-            Integer idUsuarioLogado = usuarioLogado.getId_usuario();
+			entity.setConvidados(dto.getConvidados());
+		}
 
-            if (!idDonoDaReserva.equals(idUsuarioLogado)) {
-                throw new AccessDeniedException("Acesso negado: Você só pode excluir suas próprias reservas.");
-            }
-        }
-        reservaRepository.delete(entity);
-    }
+		return toDto(entity);
+	}
+
+	@Override
+	@Transactional
+	public ReservaDTO update(Integer id, ReservaDTO dto) {
+		ReservaEntity entity = reservaRepository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("Reserva não encontrada para o ID: " + id));
+
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+		if (auth == null || !auth.isAuthenticated()) {
+			throw new AccessDeniedException("Usuário não autenticado.");
+		}
+
+		UsuarioSistema usuarioLogado = (UsuarioSistema) auth.getPrincipal();
+		Integer idLogado = usuarioLogado.getId_usuario();
+
+		entity.setDataHoraInicio(dto.getDataHoraInicio());
+		entity.setDataHoraFim(dto.getDataHoraFim());
+		if (!(entity.getUsuario().getId_usuario() == (idLogado))) {
+			UsuarioEntity novoUsuario = usuarioRepository.findById(idLogado).orElseThrow(
+					() -> new EntityNotFoundException("Usuário não encontrado"));
+			entity.setUsuario(novoUsuario);
+		}
+
+		if (!entity.getQuadra().getId_quadra().equals(dto.getIdQuadra())) {
+			QuadraEntity novaQuadra = quadraRepository.findById(dto.getIdQuadra()).orElseThrow(
+					() -> new EntityNotFoundException("Quadra não encontrada com ID: " + dto.getIdQuadra()));
+			entity.setQuadra(novaQuadra);
+		}
+
+		if (dto.getConvidados() != null) {
+			entity.getConvidados().clear();
+
+			for (ConvidadoEntity convidado : dto.getConvidados()) {
+				convidado.setReserva(entity);
+				entity.getConvidados().add(convidado);
+			}
+		}
+		entity = reservaRepository.save(entity);
+
+		return toDto(entity);
+	}
+
+	@Override
+	@Transactional
+	public void delete(Integer id) {
+		ReservaEntity entity = reservaRepository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("Reserva não encontrada para o id " + id));
+
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+		if (authentication == null || !authentication.isAuthenticated()) {
+			throw new AccessDeniedException("Usuário não autenticado.");
+		}
+
+		Object principal = authentication.getPrincipal();
+		UsuarioSistema usuarioLogado;
+
+		try {
+			usuarioLogado = (UsuarioSistema) principal;
+		} catch (ClassCastException e) {
+			throw new RuntimeException("Erro interno de segurança: Tipo de usuário inválido na sessão.");
+		}
+
+		String role = usuarioLogado.getRole().getNome();
+
+		if (!"ADMIN".equalsIgnoreCase(role)) {
+			Integer idDonoDaReserva = entity.getUsuario().getId_usuario();
+			Integer idUsuarioLogado = usuarioLogado.getId_usuario();
+
+			if (!idDonoDaReserva.equals(idUsuarioLogado)) {
+				throw new AccessDeniedException("Acesso negado: Você só pode excluir suas próprias reservas.");
+			}
+		}
+		reservaRepository.delete(entity);
+	}
 }
