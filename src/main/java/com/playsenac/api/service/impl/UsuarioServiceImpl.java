@@ -3,13 +3,16 @@ package com.playsenac.api.service.impl;
 import com.playsenac.api.dto.UsuarioDTO;
 import com.playsenac.api.entities.UsuarioEntity;
 import com.playsenac.api.repository.UsuarioRepository;
+import com.playsenac.api.security.UsuarioSistema;
 import com.playsenac.api.service.UsuarioService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
@@ -31,11 +34,27 @@ public class UsuarioServiceImpl implements UsuarioService {
         entity.setFkRole(1);
         return entity;
     }
-
+    
     @Override
-    public UsuarioDTO findByEmail(String email) {
-        UsuarioEntity entity = usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado com o email: " + email));
+    public UsuarioDTO findMyDetails() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth == null || !auth.isAuthenticated()) {
+            throw new AccessDeniedException("Usuário não autenticado. Faça login para acessar.");
+        }
+        Object principal = auth.getPrincipal();
+        UsuarioSistema usuarioLogado;
+
+        if (!(principal instanceof UsuarioSistema)) {
+             throw new AccessDeniedException("Token inválido ou expirado. Renove a autenticação.");
+        }
+        
+        usuarioLogado = (UsuarioSistema) principal;
+        Integer idLogado = usuarioLogado.getId_usuario();
+
+        UsuarioEntity entity = usuarioRepository.findById(idLogado)
+            .orElseThrow(() -> new EntityNotFoundException("Usuário logado não encontrado no banco de dados."));
+
         return UsuarioDTO.fromEntity(entity);
     }
 
