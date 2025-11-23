@@ -8,6 +8,8 @@ import java.util.List;
 public interface ReservaService {
     List<ReservaDTOId> findAll();
 
+    List<ReservaDTOId> findMinhasReservas();
+    
     ReservaDTOId findById(Integer id);
 
     ReservaDTO addNew(ReservaDTO dto);

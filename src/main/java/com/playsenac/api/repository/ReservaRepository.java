@@ -26,4 +26,7 @@ public interface ReservaRepository extends JpaRepository<ReservaEntity, Integer>
 	            @Param("inicioBloqueio") LocalDateTime inicioBloqueio,
 	            @Param("fimBloqueio") LocalDateTime fimBloqueio
 	    );
+	
+	@Query("SELECT r FROM ReservaEntity r WHERE r.usuario.id_usuario = :idUsuario")
+    List<ReservaEntity> findPorUsuario(@Param("idUsuario") Integer idUsuario);
 }
