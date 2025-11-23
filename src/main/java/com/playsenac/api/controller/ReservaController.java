@@ -36,6 +36,13 @@ public class ReservaController {
         }
     }
 
+    @GetMapping("/minhas")
+    public ResponseEntity<List<ReservaDTOId>> minhasReservas() {
+        List<ReservaDTOId> lista = service.findMinhasReservas();
+        
+        return ResponseEntity.ok(lista);
+    }
+    
     @GetMapping("/{id}")
     public ResponseEntity<ReservaDTOId> findById(@PathVariable Integer id) {
         try {

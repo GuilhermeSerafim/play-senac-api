@@ -15,8 +15,13 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.access.AccessDeniedException;
+import com.playsenac.api.security.UsuarioSistema;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ReservaServiceImpl implements ReservaService {
@@ -85,6 +90,25 @@ public class ReservaServiceImpl implements ReservaService {
         return toDtoId(entity);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<ReservaDTOId> findMinhasReservas() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        
+        if (auth == null || !auth.isAuthenticated()) {
+            throw new AccessDeniedException("Usuário não autenticado.");
+        }
+
+        UsuarioSistema usuarioLogado = (UsuarioSistema) auth.getPrincipal();
+        Integer idLogado = usuarioLogado.getId_usuario();
+
+        List<ReservaEntity> reservas = reservaRepository.findPorUsuario(idLogado);
+
+        return reservas.stream()
+                .map(this::toDtoId)
+                .collect(Collectors.toList());
+    }
+    
     @Override
     @Transactional
     public ReservaDTO addNew(ReservaDTO dto) {
