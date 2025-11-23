@@ -14,9 +14,6 @@ public class ReservaDTO {
     @NotNull(message = "Data e hora de fim são obrigatórias")
     private LocalDateTime dataHoraFim;
 
-    @NotNull(message = "ID do usuário é obrigatório")
-    private Integer idUsuario;
-
     @NotNull(message = "ID da quadra é obrigatório")
     private Integer idQuadra;
 
@@ -27,11 +24,9 @@ public class ReservaDTO {
     public ReservaDTO(
 			@NotNull(message = "Data e hora de início são obrigatórias") LocalDateTime dataHoraInicio,
 			@NotNull(message = "Data e hora de fim são obrigatórias") LocalDateTime dataHoraFim,
-			@NotNull(message = "ID do usuário é obrigatório") Integer idUsuario,
 			@NotNull(message = "ID da quadra é obrigatório") Integer idQuadra, List<ConvidadoEntity> convidados) {
 		this.dataHoraInicio = dataHoraInicio;
 		this.dataHoraFim = dataHoraFim;
-		this.idUsuario = idUsuario;
 		this.idQuadra = idQuadra;
 		this.convidados = convidados;
 	}
@@ -50,14 +45,6 @@ public class ReservaDTO {
 
 	public void setDataHoraFim(LocalDateTime dataHoraFim) {
 		this.dataHoraFim = dataHoraFim;
-	}
-
-	public Integer getIdUsuario() {
-		return idUsuario;
-	}
-	
-	public void setIdUsuario(Integer idUsuario) {
-	    this.idUsuario = idUsuario;
 	}
 
 	public void setIdQuadra(Integer idQuadra) {

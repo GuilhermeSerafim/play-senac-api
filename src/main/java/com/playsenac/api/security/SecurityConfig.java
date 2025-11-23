@@ -59,24 +59,21 @@ public class SecurityConfig {
 						.requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
 						.requestMatchers("/usuarios/cadastro").permitAll()
 						.requestMatchers("/login").permitAll()
-						.requestMatchers(HttpMethod.GET, "/quadras").permitAll()
-						
-						//requisições para ambos
-						.requestMatchers(HttpMethod.GET, "/reservas/**").hasAnyAuthority("ADMIN", "COMUM")
-						.requestMatchers(HttpMethod.POST, "/reservas/**").hasAnyAuthority("ADMIN", "COMUM")
-						.requestMatchers(HttpMethod.DELETE, "/reservas/**").hasAnyAuthority("ADMIN", "COMUM")
+						.requestMatchers(HttpMethod.GET, "/quadras/**").permitAll()
 						
 						//requisições exclusivas do administrador
 						.requestMatchers("/quadras/**").hasAuthority("ADMIN")
 						.requestMatchers("/bloqueios/**").hasAuthority("ADMIN")
+						.requestMatchers(HttpMethod.GET, "/reservas/**").hasAuthority("ADMIN")
 						.requestMatchers(HttpMethod.PUT, "/reservas/**").hasAuthority("ADMIN")
 						
+						//requisições para ambos
+						.requestMatchers(HttpMethod.POST, "/reservas/**").hasAnyAuthority("ADMIN", "COMUM")
+						.requestMatchers(HttpMethod.DELETE, "/reservas/**").hasAnyAuthority("ADMIN", "COMUM")
+						
 						//requisições exclusivas do usuario
-						.requestMatchers(HttpMethod.PUT ,"/usuarios/**").hasAuthority("COMUM")
-						.requestMatchers(HttpMethod.DELETE ,"/usuarios/**").hasAuthority("COMUM")
-                        .requestMatchers(HttpMethod.GET, "/usuarios/buscar").hasAuthority("COMUM")
-                        .requestMatchers(HttpMethod.PUT, "/usuarios/atualizar/**").hasAuthority("COMUM")
-                        .requestMatchers(HttpMethod.DELETE, "/usuarios/deletar/**").hasAuthority("COMUM")
+						.requestMatchers("/usuarios/**").hasAuthority("COMUM")
+                        .requestMatchers("/reservas/minhas/**").hasAuthority("COMUM")
 						
 						.anyRequest().authenticated()
 						)
