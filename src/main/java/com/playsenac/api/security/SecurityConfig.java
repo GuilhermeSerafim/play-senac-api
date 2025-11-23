@@ -55,25 +55,28 @@ public class SecurityConfig {
 				.headers(headers -> headers.frameOptions(fo -> fo.sameOrigin()))
 				.formLogin(formLogin -> formLogin.disable())
 				.authorizeHttpRequests(authorize -> authorize
-						//requisições sem a necessidade de autenticação ou autorização
+						
 						.requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
 						.requestMatchers("/usuarios/cadastro").permitAll()
 						.requestMatchers("/login").permitAll()
-						.requestMatchers(HttpMethod.GET, "/quadras/**").permitAll()
+						.requestMatchers(HttpMethod.GET, "/quadras/**").permitAll() 
 						
-						//requisições exclusivas do administrador
+						
 						.requestMatchers("/quadras/**").hasAuthority("ADMIN")
 						.requestMatchers("/bloqueios/**").hasAuthority("ADMIN")
-						.requestMatchers(HttpMethod.GET, "/reservas/**").hasAuthority("ADMIN")
 						.requestMatchers(HttpMethod.PUT, "/reservas/**").hasAuthority("ADMIN")
 						
-						//requisições para ambos
+						
 						.requestMatchers(HttpMethod.POST, "/reservas/**").hasAnyAuthority("ADMIN", "COMUM")
 						.requestMatchers(HttpMethod.DELETE, "/reservas/**").hasAnyAuthority("ADMIN", "COMUM")
 						
-						//requisições exclusivas do usuario
+						
+						.requestMatchers(HttpMethod.GET, "/reservas/minhas/**").hasAuthority("COMUM")
+						
+						.requestMatchers(HttpMethod.GET, "/reservas/**").hasAuthority("ADMIN") 
+						
+						
 						.requestMatchers("/usuarios/**").hasAuthority("COMUM")
-                        .requestMatchers("/reservas/minhas/**").hasAuthority("COMUM")
 						
 						.anyRequest().authenticated()
 						)
