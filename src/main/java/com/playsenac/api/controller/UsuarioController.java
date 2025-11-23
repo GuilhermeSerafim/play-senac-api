@@ -1,8 +1,8 @@
 package com.playsenac.api.controller;
 
 import com.playsenac.api.dto.UsuarioDTO;
-import com.playsenac.api.entities.UsuarioEntity;
 import com.playsenac.api.service.UsuarioService;
+
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +15,16 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/usuarios")
+@CrossOrigin(origins = "*")
+@SecurityRequirement(name = "bearer-jwt")
 public class UsuarioController {
 
     @Autowired
     private UsuarioService service;
 
     @GetMapping("/buscar")
-    public ResponseEntity<UsuarioDTO> findByEmail(@RequestParam String email) {
-        UsuarioDTO usuario = service.findByEmail(email);
+    public ResponseEntity<UsuarioDTO> findMyDetails() {
+        UsuarioDTO usuario = service.findMyDetails();
         return ResponseEntity.ok(usuario);
     }
 

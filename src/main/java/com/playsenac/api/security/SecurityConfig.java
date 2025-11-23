@@ -76,7 +76,7 @@ public class SecurityConfig {
 						.requestMatchers(HttpMethod.GET, "/reservas/**").hasAuthority("ADMIN") 
 						
 						
-						.requestMatchers("/usuarios/**").hasAuthority("COMUM")
+						.requestMatchers("/usuarios/buscar/**").hasAuthority("COMUM")
 						
 						.anyRequest().authenticated()
 						)

@@ -105,7 +105,7 @@ public class ReservaServiceImpl implements ReservaService {
 
 		UsuarioSistema usuarioLogado = (UsuarioSistema) auth.getPrincipal();
 		Integer idLogado = usuarioLogado.getId_usuario();
-
+		
 		List<ReservaEntity> reservas = reservaRepository.findPorUsuario(idLogado);
 
 		return reservas.stream().map(this::toDtoId).collect(Collectors.toList());
