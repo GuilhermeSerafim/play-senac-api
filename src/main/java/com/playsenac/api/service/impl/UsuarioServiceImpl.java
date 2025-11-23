@@ -110,8 +110,22 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public void delete(Integer id) {
-        UsuarioEntity entity = usuarioRepository.findById(id)
+    public void delete() {
+    	Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth == null || !auth.isAuthenticated()) {
+            throw new AccessDeniedException("Usuário não autenticado. Faça login para acessar.");
+        }
+        Object principal = auth.getPrincipal();
+        UsuarioSistema usuarioLogado;
+
+        if (!(principal instanceof UsuarioSistema)) {
+             throw new AccessDeniedException("Token inválido ou expirado. Renove a autenticação.");
+        }
+        
+        usuarioLogado = (UsuarioSistema) principal;
+        Integer idLogado = usuarioLogado.getId_usuario();
+        UsuarioEntity entity = usuarioRepository.findById(idLogado)
                 .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
         usuarioRepository.delete(entity);
 
