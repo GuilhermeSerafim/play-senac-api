@@ -14,7 +14,7 @@ public class UsuarioEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_usuario", unique = true)
-	private int id_usuario;
+	private Integer id_usuario;
 
 	@Column(name="nome", nullable = false)
 	private String nome;
@@ -45,7 +45,7 @@ public class UsuarioEntity {
 		this.telefone = telefone;
 	}
 
-    public int getId_usuario() {
+    public Integer getId_usuario() {
         return id_usuario;
     }
 
