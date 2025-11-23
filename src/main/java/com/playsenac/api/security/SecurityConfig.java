@@ -55,7 +55,7 @@ public class SecurityConfig {
 				.headers(headers -> headers.frameOptions(fo -> fo.sameOrigin()))
 				.formLogin(formLogin -> formLogin.disable())
 				.authorizeHttpRequests(authorize -> authorize
-						
+						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 						.requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
 						.requestMatchers("/usuarios/cadastro").permitAll()
 						.requestMatchers("/login").permitAll()
