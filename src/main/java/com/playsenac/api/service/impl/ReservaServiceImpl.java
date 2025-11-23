@@ -161,14 +161,6 @@ public class ReservaServiceImpl implements ReservaService {
 
         return toDto(entity);
     }
-
-//    @Override
-//    public void delete(Integer id) {
-//    	ReservaEntity entity = reservaRepository.findById(id)
-//    			.orElseThrow(() -> new EntityNotFoundException("reserva não encontrada para o id " + id));
-//    	reservaRepository.delete(entity);
-//    }
-    
     @Override
     @Transactional
     public void delete(Integer id) {
