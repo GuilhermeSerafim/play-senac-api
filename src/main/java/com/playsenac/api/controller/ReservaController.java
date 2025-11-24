@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
 import java.util.Collections;
@@ -54,16 +55,30 @@ public class ReservaController {
     }
 
     @PostMapping
-    public ResponseEntity<ReservaDTO> addNew(@Valid @RequestBody ReservaDTO dto) {
-        ReservaDTO novaReserva = service.addNew(dto);
-        URI location = URI.create("/reservas/" + novaReserva.getDataHoraInicio());
-        return ResponseEntity.created(location).body(novaReserva);
+    public ResponseEntity<?> addNew(@Valid @RequestBody ReservaDTO dto) {
+    	try {
+            ReservaDTO novaReserva = service.addNew(dto);
+            URI location = URI.create("/reservas/" + novaReserva.getDataHoraInicio());
+            return ResponseEntity.created(location).body(novaReserva);
+    	} catch (ResponseStatusException err) {
+    		return ResponseEntity
+                    .status(err.getStatusCode())
+                    .body(err.getReason());
+    	}
     }
     
     @PutMapping("/{id}")
-    public ResponseEntity<ReservaDTO> update(@PathVariable Integer id, @RequestBody @Valid ReservaDTO dto) {
-    	ReservaDTO upDTO = service.update(id, dto);
-    	return ResponseEntity.ok(upDTO);
+    public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody @Valid ReservaDTO dto) {
+    	try {
+    	   	ReservaDTO upDTO = service.update(id, dto);
+        	return ResponseEntity.ok(upDTO);
+		} catch (EntityNotFoundException err) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err.getMessage());
+		} catch (ResponseStatusException err) {
+    		return ResponseEntity
+                    .status(err.getStatusCode())
+                    .body(err.getReason());
+		}
     }
     
     @DeleteMapping("/{id}")

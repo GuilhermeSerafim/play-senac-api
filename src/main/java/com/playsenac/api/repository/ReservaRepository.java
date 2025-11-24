@@ -29,4 +29,29 @@ public interface ReservaRepository extends JpaRepository<ReservaEntity, Integer>
 	
 	@Query("SELECT r FROM ReservaEntity r WHERE r.usuario.id_usuario = :idUsuario")
     List<ReservaEntity> findPorUsuario(@Param("idUsuario") Integer idUsuario);
+	
+	@Query("SELECT COUNT(r) > 0 FROM ReservaEntity r " +
+	           "WHERE r.quadra.id = :quadraId " +
+	           "AND (" +
+	           "  :novoInicio < r.dataHoraFim " +
+	           "  AND " +
+	           "  :novoFim > r.dataHoraInicio " +
+	           ")")
+	    boolean existeReservaNoIntervalo(@Param("quadraId") Integer quadraId, 
+	                                     @Param("novoInicio") LocalDateTime inicio, 
+	                                     @Param("novoFim") LocalDateTime fim);
+	
+	@Query("SELECT COUNT(r) > 0 FROM ReservaEntity r " +
+		       "WHERE r.quadra.id_quadra = :quadraId " +
+		       "AND (" +
+		       "  :novoInicio < r.dataHoraFim " +
+		       "  AND " +
+		       "  :novoFim > r.dataHoraInicio " +
+		       ") " +
+		       "AND r.id_reserva != :idIgnorado")
+		boolean existeReservaNoIntervaloIgnorandoId(
+		        @Param("quadraId") Integer quadraId, 
+		        @Param("novoInicio") LocalDateTime inicio, 
+		        @Param("novoFim") LocalDateTime fim,
+		        @Param("idIgnorado") Integer idIgnorado);
 }
