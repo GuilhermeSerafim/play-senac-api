@@ -52,9 +52,9 @@ public class SecurityConfig {
 	PasswordEncoder passwordEncoder() {
 		Map<String, PasswordEncoder> encoders = new HashMap<String, PasswordEncoder>();
 		BCryptPasswordEncoder bcryptEnc = new BCryptPasswordEncoder();
-		encoders.put("bycrypt", bcryptEnc);
+		encoders.put("bcrypt", bcryptEnc);
 		encoders.put("noop", NoOpPasswordEncoder.getInstance());
-		var passwordEncoder = new DelegatingPasswordEncoder("bycrypt", encoders);
+		var passwordEncoder = new DelegatingPasswordEncoder("bcrypt", encoders);
 		passwordEncoder.setDefaultPasswordEncoderForMatches(bcryptEnc);
 		return passwordEncoder;
 	}
