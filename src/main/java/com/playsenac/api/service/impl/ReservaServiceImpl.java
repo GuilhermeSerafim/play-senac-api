@@ -1,11 +1,14 @@
 package com.playsenac.api.service.impl;
 
+import com.playsenac.api.dto.QuadraDTOId;
 import com.playsenac.api.dto.ReservaDTO;
 import com.playsenac.api.dto.ReservaDTOId;
+import com.playsenac.api.entities.BloqueioEntity;
 import com.playsenac.api.entities.ConvidadoEntity;
 import com.playsenac.api.entities.QuadraEntity;
 import com.playsenac.api.entities.ReservaEntity;
 import com.playsenac.api.entities.UsuarioEntity;
+import com.playsenac.api.repository.BloqueioRepository;
 import com.playsenac.api.repository.ConvidadoRepository;
 import com.playsenac.api.repository.QuadraRepository;
 import com.playsenac.api.repository.ReservaRepository;
@@ -13,8 +16,10 @@ import com.playsenac.api.repository.UsuarioRepository;
 import com.playsenac.api.service.ReservaService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.access.AccessDeniedException;
@@ -37,6 +42,9 @@ public class ReservaServiceImpl implements ReservaService {
 
 	@Autowired
 	private ConvidadoRepository convidadoRepository;
+	
+	@Autowired
+	private BloqueioRepository bloqueioRepository;
 
 	public ReservaDTO toDto(ReservaEntity entity) {
 		ReservaDTO dto = new ReservaDTO();
@@ -69,14 +77,21 @@ public class ReservaServiceImpl implements ReservaService {
 		Integer idLogado = usuarioLogado.getId_usuario();
 		UsuarioEntity usuario = usuarioRepository.findById(idLogado)
 				.orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+		
 		QuadraEntity quadra = quadraRepository.findById(dto.getIdQuadra())
 				.orElseThrow(() -> new EntityNotFoundException("Quadra não encontrada com ID: " + dto.getIdQuadra()));
+		
 		ReservaEntity entity = new ReservaEntity();
+		
 		if (usuario != null && quadra != null) {
 			entity.setDataHoraInicio(dto.getDataHoraInicio());
 			entity.setDataHoraFim(dto.getDataHoraFim());
 			entity.setQuadra(quadra);
 			entity.setUsuario(usuario);
+			
+			if (dto.getConvidados() != null) {
+				entity.setConvidados(dto.getConvidados());
+			}
 		}
 		return entity;
 	}
@@ -115,63 +130,107 @@ public class ReservaServiceImpl implements ReservaService {
 	@Transactional
 	public ReservaDTO addNew(ReservaDTO dto) {
 		ReservaEntity entity = toEntity(dto);
+		
+		if (entity.getDataHoraInicio().isAfter(entity.getDataHoraFim())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, 
+                   "A data final não pode ser anterior à data inicial.");
+       }
 
-		entity = reservaRepository.save(entity);
+       boolean existeBloqueio = bloqueioRepository.existeBloqueioNoIntervalo(
+               entity.getQuadra().getId_quadra(),
+               entity.getDataHoraInicio(),
+               entity.getDataHoraFim()
+       );
 
-		if (dto.getConvidados() != null && !dto.getConvidados().isEmpty()) {
-			for (ConvidadoEntity convidado : dto.getConvidados()) {
+       if (existeBloqueio) {
+           throw new ResponseStatusException(HttpStatus.CONFLICT, 
+                   "Não é possível reservar: A quadra está bloqueada neste período.");
+       }
+       
+       boolean existeReserva = reservaRepository.existeReservaNoIntervalo(entity.getQuadra().getId_quadra(), entity.getDataHoraInicio(), entity.getDataHoraFim());
 
-				convidado.setReserva(entity);
-				convidadoRepository.save(convidado);
-			}
-
-			entity.setConvidados(dto.getConvidados());
+		if (existeReserva) {
+			throw new ResponseStatusException(HttpStatus.CONFLICT, 
+					"Já existe uma reserva confirmada para este horário.");
 		}
+		
+		if (entity.getConvidados() != null && !entity.getConvidados().isEmpty()) {
+            for (ConvidadoEntity convidado : entity.getConvidados()) {
+                convidado.setReserva(entity);
+            }
+        }
+		
+		entity = reservaRepository.save(entity);
 
 		return toDto(entity);
 	}
 
 	@Override
-	@Transactional
-	public ReservaDTO update(Integer id, ReservaDTO dto) {
-		ReservaEntity entity = reservaRepository.findById(id)
-				.orElseThrow(() -> new EntityNotFoundException("Reserva não encontrada para o ID: " + id));
+    @Transactional
+    public ReservaDTO update(Integer id, ReservaDTO dto) {
+        ReservaEntity entity = reservaRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Reserva não encontrada para o ID: " + id));
 
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UsuarioSistema usuarioLogado = (UsuarioSistema) auth.getPrincipal();
+        Integer idLogado = usuarioLogado.getId_usuario();
 
-		if (auth == null || !auth.isAuthenticated()) {
-			throw new AccessDeniedException("Usuário não autenticado.");
-		}
+        entity.setDataHoraInicio(dto.getDataHoraInicio());
+        entity.setDataHoraFim(dto.getDataHoraFim());
 
-		UsuarioSistema usuarioLogado = (UsuarioSistema) auth.getPrincipal();
-		Integer idLogado = usuarioLogado.getId_usuario();
+        if (!entity.getUsuario().getId_usuario().equals(idLogado)) {
+            UsuarioEntity novoUsuario = usuarioRepository.findById(idLogado)
+                    .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+            entity.setUsuario(novoUsuario);
+        }
 
-		entity.setDataHoraInicio(dto.getDataHoraInicio());
-		entity.setDataHoraFim(dto.getDataHoraFim());
-		if (!(entity.getUsuario().getId_usuario() == (idLogado))) {
-			UsuarioEntity novoUsuario = usuarioRepository.findById(idLogado).orElseThrow(
-					() -> new EntityNotFoundException("Usuário não encontrado"));
-			entity.setUsuario(novoUsuario);
-		}
+        if (!entity.getQuadra().getId_quadra().equals(dto.getIdQuadra())) {
+            QuadraEntity novaQuadra = quadraRepository.findById(dto.getIdQuadra())
+                    .orElseThrow(() -> new EntityNotFoundException("Quadra não encontrada ID: " + dto.getIdQuadra()));
+            entity.setQuadra(novaQuadra);
+        }
 
-		if (!entity.getQuadra().getId_quadra().equals(dto.getIdQuadra())) {
-			QuadraEntity novaQuadra = quadraRepository.findById(dto.getIdQuadra()).orElseThrow(
-					() -> new EntityNotFoundException("Quadra não encontrada com ID: " + dto.getIdQuadra()));
-			entity.setQuadra(novaQuadra);
-		}
+        if (dto.getConvidados() != null) {
+            entity.getConvidados().clear();
 
-		if (dto.getConvidados() != null) {
-			entity.getConvidados().clear();
+            for (ConvidadoEntity convidado : dto.getConvidados()) {
+                convidado.setReserva(entity);
+                entity.getConvidados().add(convidado);
+            }
+        }
+        
+        if (entity.getDataHoraInicio().isAfter(entity.getDataHoraFim())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "A data final não pode ser anterior à data inicial.");
+        }
 
-			for (ConvidadoEntity convidado : dto.getConvidados()) {
-				convidado.setReserva(entity);
-				entity.getConvidados().add(convidado);
-			}
-		}
-		entity = reservaRepository.save(entity);
+        boolean existeBloqueio = bloqueioRepository.existeBloqueioNoIntervalo(
+                entity.getQuadra().getId_quadra(),
+                entity.getDataHoraInicio(),
+                entity.getDataHoraFim()
+        );
 
-		return toDto(entity);
-	}
+        if (existeBloqueio) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "Não é possível reservar: A quadra está bloqueada neste período.");
+        }
+
+        boolean existeReserva = reservaRepository.existeReservaNoIntervaloIgnorandoId(
+                entity.getQuadra().getId_quadra(),
+                entity.getDataHoraInicio(),
+                entity.getDataHoraFim(),
+                id
+        );
+
+        if (existeReserva) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "Já existe outra reserva confirmada para este horário.");
+        }
+
+        entity = reservaRepository.save(entity);
+
+        return toDto(entity);
+    }
 
 	@Override
 	@Transactional
