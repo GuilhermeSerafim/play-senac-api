@@ -1,9 +1,9 @@
 package com.playsenac.api.entities;
 
 import jakarta.persistence.*;
-
 import java.util.ArrayList;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "quadra")
@@ -16,36 +16,47 @@ public class QuadraEntity {
     @Column(unique = true, nullable = false)
     private String nome;
 
-    private boolean status;
+    @Column(name = "is_bloqueada", nullable = false) 
+    private boolean isBloqueada;
 
     @Column(name = "limite_jogadores", nullable = false)
     private Integer limiteJogadores;
+    
+    @Column(name = "imagem_url") 
+    private String imagemUrl;
 
-    private boolean interna;
-
-    @OneToMany(mappedBy = "quadra")
+    @OneToMany(mappedBy = "quadra", cascade = CascadeType.REMOVE, orphanRemoval = true) 
+    @JsonIgnore
     private List<ReservaEntity> reservas;
-
+    
+    @OneToMany(mappedBy = "quadra", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @JsonIgnore
+    private List<BloqueioEntity> bloqueios;
+    
     @OneToMany(mappedBy = "quadra", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DisponibilidadeEntity> disponibilidades = new ArrayList();
+    private List<DisponibilidadeEntity> disponibilidades = new ArrayList<>();
 
     public QuadraEntity() {
     }
-
-    public QuadraEntity(String nome, Integer limiteJogadores, boolean interna, List<ReservaEntity> reservas) {
+    
+    public QuadraEntity(String nome, Integer limiteJogadores, boolean isBloqueada, String imagemUrl) {
         this.nome = nome;
         this.limiteJogadores = limiteJogadores;
-        this.interna = interna;
-        this.reservas = reservas;
-    }
-
-    public Integer getId() {
-        return id_quadra;
+        this.isBloqueada = isBloqueada;
+        this.imagemUrl = imagemUrl;
     }
 
     public void setId(Integer id) {
         this.id_quadra = id;
     }
+    
+    public Integer getId_quadra() {
+		return id_quadra;
+	}
+
+	public void setId_quadra(Integer id_quadra) {
+		this.id_quadra = id_quadra;
+	}
 
     public String getNome() {
         return nome;
@@ -53,6 +64,14 @@ public class QuadraEntity {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+    
+    public boolean isBloqueada() {
+        return isBloqueada;
+    }
+
+    public void setBloqueada(boolean isBloqueada) {
+        this.isBloqueada = isBloqueada;
     }
 
     public Integer getLimiteJogadores() {
@@ -62,14 +81,14 @@ public class QuadraEntity {
     public void setLimiteJogadores(Integer limiteJogadores) {
         this.limiteJogadores = limiteJogadores;
     }
+    
+    public String getImagemUrl() {
+		return imagemUrl;
+	}
 
-    public boolean isInterna() {
-        return interna;
-    }
-
-    public void setInterna(boolean interna) {
-        this.interna = interna;
-    }
+	public void setImagemUrl(String imagemUrl) {
+		this.imagemUrl = imagemUrl;
+	}
 
      public List<ReservaEntity> getReservas() {
         return reservas;
@@ -79,21 +98,13 @@ public class QuadraEntity {
         this.reservas = reservas;
     }
 
-    public boolean isStatus() {
-        return status;
+    public List<BloqueioEntity> getBloqueios() {
+        return bloqueios;
     }
 
-    public void setStatus(boolean status) {
-        this.status = status;
+    public void setBloqueios(List<BloqueioEntity> bloqueios) {
+        this.bloqueios = bloqueios;
     }
-
-	public Integer getId_quadra() {
-		return id_quadra;
-	}
-
-	public void setId_quadra(Integer id_quadra) {
-		this.id_quadra = id_quadra;
-	}
 
 	public List<DisponibilidadeEntity> getDisponibilidades() {
 		return disponibilidades;
@@ -102,6 +113,4 @@ public class QuadraEntity {
 	public void setDisponibilidades(List<DisponibilidadeEntity> disponibilidades) {
 		this.disponibilidades = disponibilidades;
 	}
-    
-    
 }

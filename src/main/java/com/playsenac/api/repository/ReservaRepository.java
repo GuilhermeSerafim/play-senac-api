@@ -4,17 +4,54 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.playsenac.api.entities.QuadraEntity;
 import com.playsenac.api.entities.ReservaEntity;
 
 public interface ReservaRepository extends JpaRepository<ReservaEntity, Integer> {
 
-    List<ReservaEntity> findByQuadraAndStatusAndDataHoraInicioBeforeAndDataHoraFimAfter(
-        QuadraEntity quadra,
-        String status,
-        LocalDateTime dataHoraFimDoBloqueio,
-        LocalDateTime dataHoraInicioDoBloqueio
-    );
-
+	List<ReservaEntity> findByQuadraAndDataHoraInicioBeforeAndDataHoraFimAfter(
+		    QuadraEntity quadra,
+		    LocalDateTime dataFim,
+		    LocalDateTime dataInicio
+		);
+	
+	@Query("SELECT r FROM ReservaEntity r WHERE r.quadra.id_quadra = :idQuadra " +
+	           "AND r.dataHoraInicio < :fimBloqueio " +
+	           "AND r.dataHoraFim > :inicioBloqueio")
+	    List<ReservaEntity> findConflitos(
+	            @Param("idQuadra") Integer idQuadra,
+	            @Param("inicioBloqueio") LocalDateTime inicioBloqueio,
+	            @Param("fimBloqueio") LocalDateTime fimBloqueio
+	    );
+	
+	@Query("SELECT r FROM ReservaEntity r WHERE r.usuario.id_usuario = :idUsuario")
+    List<ReservaEntity> findPorUsuario(@Param("idUsuario") Integer idUsuario);
+	
+	@Query("SELECT COUNT(r) > 0 FROM ReservaEntity r " +
+	           "WHERE r.quadra.id = :quadraId " +
+	           "AND (" +
+	           "  :novoInicio < r.dataHoraFim " +
+	           "  AND " +
+	           "  :novoFim > r.dataHoraInicio " +
+	           ")")
+	    boolean existeReservaNoIntervalo(@Param("quadraId") Integer quadraId, 
+	                                     @Param("novoInicio") LocalDateTime inicio, 
+	                                     @Param("novoFim") LocalDateTime fim);
+	
+	@Query("SELECT COUNT(r) > 0 FROM ReservaEntity r " +
+		       "WHERE r.quadra.id_quadra = :quadraId " +
+		       "AND (" +
+		       "  :novoInicio < r.dataHoraFim " +
+		       "  AND " +
+		       "  :novoFim > r.dataHoraInicio " +
+		       ") " +
+		       "AND r.id_reserva != :idIgnorado")
+		boolean existeReservaNoIntervaloIgnorandoId(
+		        @Param("quadraId") Integer quadraId, 
+		        @Param("novoInicio") LocalDateTime inicio, 
+		        @Param("novoFim") LocalDateTime fim,
+		        @Param("idIgnorado") Integer idIgnorado);
 }

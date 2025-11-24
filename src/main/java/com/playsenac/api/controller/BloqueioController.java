@@ -6,14 +6,17 @@ import java.util.List;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.playsenac.api.dto.BloqueioDTO;
+import com.playsenac.api.dto.BloqueioDTOId;
 import com.playsenac.api.service.BloqueioService;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -28,14 +31,14 @@ public class BloqueioController {
     private BloqueioService service;
 
     @GetMapping
-    public List<BloqueioDTO> findAll() {
+    public List<BloqueioDTOId> findAll() {
         return service.findAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BloqueioDTO> findById(@PathVariable Integer id) {
+    public ResponseEntity<BloqueioDTOId> findById(@PathVariable Integer id) {
         try {
-            BloqueioDTO bloqueio = service.findById(id);
+            BloqueioDTOId bloqueio = service.findById(id);
             return ResponseEntity.ok(bloqueio);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
@@ -49,6 +52,18 @@ public class BloqueioController {
         URI location = URI.create("/bloqueios/" + dtoSalvo.getIdQuadra());
 
         return ResponseEntity.created(location).body(dtoSalvo);
+    }
+    
+    @PutMapping("/{id}")
+    public ResponseEntity<BloqueioDTO> update(@PathVariable Integer id, @RequestBody @Valid BloqueioDTO dto) {
+    	BloqueioDTO upDTO = service.update(id, dto);
+    	return ResponseEntity.ok(upDTO);
+    }
+    
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Integer id) {
+    	service.delete(id);
+    	return ResponseEntity.noContent().build();
     }
 
 }

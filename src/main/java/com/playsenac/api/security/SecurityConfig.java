@@ -1,5 +1,6 @@
 package com.playsenac.api.security;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,6 +20,9 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.playsenac.api.service.UsuarioSistemaService;
 
@@ -29,6 +33,21 @@ public class SecurityConfig {
 	@Autowired
 	private JwtAuthenticationFilter jwtAuthFilter;
 
+	@Bean
+	CorsConfigurationSource corsConfigurationSource() {
+	    CorsConfiguration configuration = new CorsConfiguration();
+	    
+	    configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200", "http://127.0.0.1:4200"));
+	    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
+	    configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+	    configuration.setAllowCredentials(true);
+
+	    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+	    source.registerCorsConfiguration("/**", configuration);
+	    
+	    return source;
+	}
+	
 	@Bean
 	PasswordEncoder passwordEncoder() {
 		Map<String, PasswordEncoder> encoders = new HashMap<String, PasswordEncoder>();
@@ -55,18 +74,28 @@ public class SecurityConfig {
 				.headers(headers -> headers.frameOptions(fo -> fo.sameOrigin()))
 				.formLogin(formLogin -> formLogin.disable())
 				.authorizeHttpRequests(authorize -> authorize
-						//requisições sem a necessidade de autenticação ou autorização
+						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 						.requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
 						.requestMatchers("/usuarios/cadastro").permitAll()
 						.requestMatchers("/login").permitAll()
-						.requestMatchers(HttpMethod.GET, "/quadras").permitAll()
+						.requestMatchers(HttpMethod.GET, "/quadras/**").permitAll() 
 						
-						//requisições exclusivas do administrador
+						
 						.requestMatchers("/quadras/**").hasAuthority("ADMIN")
 						.requestMatchers("/bloqueios/**").hasAuthority("ADMIN")
+						.requestMatchers(HttpMethod.PUT, "/reservas/**").hasAuthority("ADMIN")
 						
-						//requisições exclusivas do usuario
-						.requestMatchers("/reservas/**").hasAuthority("COMUM")
+						
+						.requestMatchers(HttpMethod.POST, "/reservas/**").hasAnyAuthority("ADMIN", "COMUM")
+						.requestMatchers(HttpMethod.DELETE, "/reservas/**").hasAnyAuthority("ADMIN", "COMUM")
+						
+						
+						.requestMatchers(HttpMethod.GET, "/reservas/minhas/**").hasAuthority("COMUM")
+						
+						.requestMatchers(HttpMethod.GET, "/reservas/**").hasAuthority("ADMIN") 
+						
+						
+						.requestMatchers("/usuarios/buscar/**").hasAuthority("COMUM")
 						
 						.anyRequest().authenticated()
 						)

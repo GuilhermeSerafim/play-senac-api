@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "Usuario")
 public class UsuarioEntity {
@@ -12,12 +14,12 @@ public class UsuarioEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_usuario", unique = true)
-	private int id_usuario;
+	private Integer id_usuario;
 
 	@Column(name="nome", nullable = false)
 	private String nome;
 
-	@Column(name="email", nullable = false)
+	@Column(name="email", nullable = false, unique = true)
 	private String email;
 
 	@Column(name="senha", nullable = false)
@@ -29,6 +31,7 @@ public class UsuarioEntity {
     @Column(name="fk_role")
     private int fk_role;
 
+    @JsonIgnore
 	@OneToMany(mappedBy = "usuario")
 	private List<ReservaEntity> reservas = new ArrayList<>();
 
@@ -42,7 +45,7 @@ public class UsuarioEntity {
 		this.telefone = telefone;
 	}
 
-    public int getId_usuario() {
+    public Integer getId_usuario() {
         return id_usuario;
     }
 

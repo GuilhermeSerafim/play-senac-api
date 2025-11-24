@@ -1,36 +1,62 @@
 package com.playsenac.api.controller;
 
 import com.playsenac.api.dto.UsuarioDTO;
-import com.playsenac.api.entities.UsuarioEntity;
 import com.playsenac.api.service.UsuarioService;
+
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
+
 @RestController
 @RequestMapping("/usuarios")
+@CrossOrigin(origins = "*")
+@SecurityRequirement(name = "bearer-jwt")
 public class UsuarioController {
-	
+
     @Autowired
     private UsuarioService service;
 
+    @GetMapping("/buscar")
+    public ResponseEntity<UsuarioDTO> findMyDetails() {
+        UsuarioDTO usuario = service.findMyDetails();
+        return ResponseEntity.ok(usuario);
+    }
+
+
     @PostMapping("/cadastro")
-    public ResponseEntity<UsuarioDTO> addNew(@RequestBody UsuarioDTO dto) {
+    public ResponseEntity<?> addNew(@RequestBody @Valid UsuarioDTO dto) {
+    	try {
+            UsuarioDTO u = service.addNew(dto);
+            URI location = ServletUriComponentsBuilder
+                    .fromCurrentRequestUri()
+                    .path("/{nome}")
+                    .buildAndExpand(u.getNome())
+                    .toUri();
+            return ResponseEntity.created(location).build();
+		} catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+    }
 
-        UsuarioDTO u = service.addNew(dto);
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequestUri()
-                .path("/{nome}")
-                .buildAndExpand(u.getNome())
-                .toUri();
-        return ResponseEntity.created(location).build();
+    @PutMapping("/atualizar")
+    public ResponseEntity<?> update(@RequestBody @Valid UsuarioDTO dto) {
+    	try {
+            UsuarioDTO atualizado = service.update(dto);
+            return ResponseEntity.ok(atualizado);
+		} catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+    }
 
-
+    @DeleteMapping("/deletar/")
+    public ResponseEntity<Void> delete() {
+        service.delete();
+        return ResponseEntity.noContent().build();
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.playsenac.api.dto.BloqueioDTO;
+import com.playsenac.api.dto.BloqueioDTOId;
 import com.playsenac.api.entities.BloqueioEntity;
 import com.playsenac.api.entities.QuadraEntity;
 import com.playsenac.api.entities.ReservaEntity;
@@ -21,7 +22,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 @Service
-public class BloqueioServiceImpl implements BloqueioService{
+public class BloqueioServiceImpl implements BloqueioService {
 
     @Autowired
     private BloqueioRepository repository;
@@ -35,51 +36,156 @@ public class BloqueioServiceImpl implements BloqueioService{
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    @Override
-    public BloqueioDTO findById(Integer id){
-        BloqueioEntity entity = repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Bloqueio não encontrado: " + id));
 
-        return BloqueioDTO.fromEntity(entity);
-    }
-
-    @Override
-    public List<BloqueioDTO> findAll() {
-        return repository.findAll().stream().map(BloqueioDTO::fromEntity).collect(Collectors.toList());
-    }
-
-    @Transactional
-    @Override
-    public BloqueioDTO addNew(BloqueioDTO dto) {
-        QuadraEntity quadra = quadraRepository.findById(dto.getIdQuadra()).orElseThrow(() -> new EntityNotFoundException("Quadra não encontrada"));
-        UsuarioEntity usuario = usuarioRepository.findById(dto.getIdUsuario()).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+    private BloqueioDTOId toDtoId(BloqueioEntity entity) {
+        BloqueioDTOId dto = new BloqueioDTOId();
+        dto.setId(entity.getId_bloqueio());
+        dto.setDataHoraInicio(entity.getDataHoraInicio());
+        dto.setDataHoraFim(entity.getDataHoraFim());
+        dto.setMotivo(entity.getMotivo());
         
-        List<ReservaEntity> reservasConflitantes = reservaRepository.findByQuadraAndStatusAndDataHoraInicioBeforeAndDataHoraFimAfter(
-            quadra, 
-            "Ativa", 
-            dto.getDataHoraFim(), 
-            dto.getDataHoraInicio()
+        if (entity.getQuadra() != null) {
+            dto.setIdQuadra(entity.getQuadra().getId_quadra());
+        }
+        if (entity.getUsuarioBloqueador() != null) {
+            dto.setIdUsuario(entity.getUsuarioBloqueador().getId_usuario());
+        }
+        return dto;
+    }
+    
+    private BloqueioDTO toDto(BloqueioEntity entity) {
+        BloqueioDTO dto = new BloqueioDTO();
+        dto.setDataHoraInicio(entity.getDataHoraInicio());
+        dto.setDataHoraFim(entity.getDataHoraFim());
+        dto.setMotivo(entity.getMotivo());
+        
+        if (entity.getQuadra() != null) {
+            dto.setIdQuadra(entity.getQuadra().getId_quadra());
+        }
+        if (entity.getUsuarioBloqueador() != null) {
+            dto.setIdUsuario(entity.getUsuarioBloqueador().getId_usuario());
+        }
+        return dto;
+    }
+    
+    
+    @Override
+    public BloqueioDTOId findById(Integer id){
+        BloqueioEntity entity = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Bloqueio não encontrado: " + id));
+
+        return toDtoId(entity);
+    }
+
+    @Override
+    public List<BloqueioDTOId> findAll() {
+        return repository.findAll().stream()
+                .map(this::toDtoId)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public BloqueioDTO addNew(BloqueioDTO dto) {
+        QuadraEntity quadra = quadraRepository.findById(dto.getIdQuadra())
+                .orElseThrow(() -> new EntityNotFoundException("Quadra não encontrada"));
+        
+        UsuarioEntity usuario = usuarioRepository.findById(dto.getIdUsuario())
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+
+        List<ReservaEntity> reservasConflitantes = reservaRepository.findConflitos(
+                dto.getIdQuadra(),
+                dto.getDataHoraInicio(),
+                dto.getDataHoraFim()
         );
 
         if (!reservasConflitantes.isEmpty()) {
-            throw new  IllegalStateException("Não é possivel bloquear Horario. Há " + reservasConflitantes.size() +  "reservas ativas no periodo");
-        } else {
-
-            BloqueioEntity entity = new BloqueioEntity();
-            entity.setDataHoraInicio(dto.getDataHoraInicio());
-            entity.setDataHoraFim(dto.getDataHoraFim());
-            entity.setMotivo(dto.getMotivo());
-            entity.setQuadraBloqueada(quadra);
-            entity.setUsuarioBloqueador(usuario);
-            
-            BloqueioEntity entidadeSalva = repository.save(entity);
-    
-            quadra.setStatus(false);
-            quadraRepository.save(quadra);
-            
-            return BloqueioDTO.fromEntity(entidadeSalva);
+            reservaRepository.deleteAll(reservasConflitantes);
         }
 
+        quadra.setBloqueada(true);
+        quadraRepository.save(quadra);
+        
+        BloqueioEntity entity = new BloqueioEntity();
+        entity.setQuadra(quadra);
+        entity.setUsuarioBloqueador(usuario);
+        entity.setDataHoraInicio(dto.getDataHoraInicio());
+        entity.setDataHoraFim(dto.getDataHoraFim());
+        entity.setMotivo(dto.getMotivo());
+
+        entity = repository.save(entity);
+
+        return toDto(entity);
     }
 
-   
+    @Override
+    @Transactional
+    public BloqueioDTO update(Integer id, BloqueioDTO dto) {
+        BloqueioEntity entity = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Bloqueio não encontrado!"));
+        
+        QuadraEntity quadraAntiga = entity.getQuadra();
+
+        entity.setDataHoraInicio(dto.getDataHoraInicio());
+        entity.setDataHoraFim(dto.getDataHoraFim());
+        entity.setMotivo(dto.getMotivo());
+        
+        if (dto.getIdUsuario() != null && !entity.getUsuarioBloqueador().getId_usuario().equals(dto.getIdUsuario())) {
+            UsuarioEntity usuario = usuarioRepository.findById(dto.getIdUsuario())
+                    .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado!"));
+            entity.setUsuarioBloqueador(usuario);
+        }
+        
+        if (dto.getIdQuadra() != null && !quadraAntiga.getId_quadra().equals(dto.getIdQuadra())) {
+            QuadraEntity novaQuadra = quadraRepository.findById(dto.getIdQuadra())
+                    .orElseThrow(() -> new EntityNotFoundException("Quadra não encontrada"));
+            
+            novaQuadra.setBloqueada(true);
+            quadraRepository.save(novaQuadra);
+            
+            entity.setQuadra(novaQuadra);
+
+            long bloqueiosRestantes = repository.countBloqueiosNaQuadra(quadraAntiga, id);
+            
+            if (bloqueiosRestantes == 0) {
+                quadraAntiga.setBloqueada(false);
+                quadraRepository.save(quadraAntiga);
+            }
+        }
+        
+        List<ReservaEntity> reservasConflitantes = reservaRepository.findConflitos(
+                entity.getQuadra().getId_quadra(),
+                entity.getDataHoraInicio(),
+                entity.getDataHoraFim()
+        );
+        
+        if (!reservasConflitantes.isEmpty()) {
+            reservaRepository.deleteAll(reservasConflitantes);
+        }
+        
+        entity = repository.save(entity);
+        
+        return toDto(entity);
+    }
+    
+    @Override
+    @Transactional
+    public void delete(Integer id) {
+        BloqueioEntity entity = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Bloqueio não encontrado para o ID: " + id));
+
+        QuadraEntity quadra = entity.getQuadra();
+
+        repository.delete(entity);
+        repository.flush(); 
+
+        long bloqueiosRestantes = repository.countByQuadra(quadra);
+
+        if (bloqueiosRestantes == 0) {
+            quadra.setBloqueada(false);
+            quadraRepository.save(quadra);
+        }
+    }
+    
+    
 }

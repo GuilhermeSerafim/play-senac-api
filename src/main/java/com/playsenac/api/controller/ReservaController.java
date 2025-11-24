@@ -1,7 +1,7 @@
 package com.playsenac.api.controller;
 
-import com.playsenac.api.dto.QuadraDTO;
 import com.playsenac.api.dto.ReservaDTO;
+import com.playsenac.api.dto.ReservaDTOId;
 import com.playsenac.api.service.ReservaService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
 import java.util.Collections;
@@ -26,9 +27,9 @@ public class ReservaController {
     private ReservaService service;
 
     @GetMapping
-    public ResponseEntity<List<ReservaDTO>> findAll() {
+    public ResponseEntity<List<ReservaDTOId>> findAll() {
         try {
-            List<ReservaDTO> reservas = service.findAll();
+            List<ReservaDTOId> reservas = service.findAll();
             return ResponseEntity.ok(reservas);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -36,10 +37,17 @@ public class ReservaController {
         }
     }
 
+    @GetMapping("/minhas")
+    public ResponseEntity<List<ReservaDTOId>> minhasReservas() {
+        List<ReservaDTOId> lista = service.findMinhasReservas();
+        
+        return ResponseEntity.ok(lista);
+    }
+    
     @GetMapping("/{id}")
-    public ResponseEntity<ReservaDTO> findById(@PathVariable Integer id) {
+    public ResponseEntity<ReservaDTOId> findById(@PathVariable Integer id) {
         try {
-            ReservaDTO reserva = service.findById(id);
+            ReservaDTOId reserva = service.findById(id);
             return ResponseEntity.ok(reserva);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
@@ -47,10 +55,36 @@ public class ReservaController {
     }
 
     @PostMapping
-    public ResponseEntity<ReservaDTO> addNew(@Valid @RequestBody ReservaDTO dto) {
-        ReservaDTO novaReserva = service.addNew(dto);
-        URI location = URI.create("/reservas/" + novaReserva.getId());
-        return ResponseEntity.created(location).body(novaReserva);
+    public ResponseEntity<?> addNew(@Valid @RequestBody ReservaDTO dto) {
+    	try {
+            ReservaDTO novaReserva = service.addNew(dto);
+            URI location = URI.create("/reservas/" + novaReserva.getDataHoraInicio());
+            return ResponseEntity.created(location).body(novaReserva);
+    	} catch (ResponseStatusException err) {
+    		return ResponseEntity
+                    .status(err.getStatusCode())
+                    .body(err.getReason());
+    	}
+    }
+    
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody @Valid ReservaDTO dto) {
+    	try {
+    	   	ReservaDTO upDTO = service.update(id, dto);
+        	return ResponseEntity.ok(upDTO);
+		} catch (EntityNotFoundException err) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err.getMessage());
+		} catch (ResponseStatusException err) {
+    		return ResponseEntity
+                    .status(err.getStatusCode())
+                    .body(err.getReason());
+		}
+    }
+    
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+    	service.delete(id);
+    	return ResponseEntity.noContent().build();
     }
 
 }

@@ -3,6 +3,7 @@ package com.playsenac.api.entities;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "reserva")
@@ -18,9 +19,6 @@ public class ReservaEntity {
     @Column(name = "data_hora_fim", nullable = false)
     private LocalDateTime dataHoraFim;
 
-    @Column(nullable = false)
-    private String status;
-
     @ManyToOne
     @JoinColumn(name = "fk_usuario", nullable = false)
     private UsuarioEntity usuario;
@@ -28,21 +26,19 @@ public class ReservaEntity {
     @ManyToOne
     @JoinColumn(name = "fk_quadra", nullable = false)
     private QuadraEntity quadra;
+    
+    @OneToMany(mappedBy = "reserva", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ConvidadoEntity> convidados;
 
     public ReservaEntity() {
     }
 
-    public ReservaEntity(Integer id_reserva, LocalDateTime dataHoraInicio, LocalDateTime dataHoraFim, String status, UsuarioEntity usuario, QuadraEntity quadra) {
+    public ReservaEntity(Integer id_reserva, LocalDateTime dataHoraInicio, LocalDateTime dataHoraFim, UsuarioEntity usuario, QuadraEntity quadra) {
         this.id_reserva = id_reserva;
         this.dataHoraInicio = dataHoraInicio;
         this.dataHoraFim = dataHoraFim;
-        this.status = status;
         this.usuario = usuario;
         this.quadra = quadra;
-    }
-
-    public Integer getIdreserva() {
-        return id_reserva;
     }
 
     public Integer getId_reserva() {
@@ -69,28 +65,29 @@ public class ReservaEntity {
         this.dataHoraFim = dataHoraFim;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public UsuarioEntity getUsuario() {
         return usuario;
     }
 
-    public void setUsuario(UsuarioEntity usuario) {
-        this.usuario = usuario;
+    public void setUsuario(UsuarioEntity optional) {
+        this.usuario = optional;
     }
 
     public QuadraEntity getQuadra() {
         return quadra;
     }
 
-    public void setQuadra(QuadraEntity quadra) {
-        this.quadra = quadra;
+    public void setQuadra(QuadraEntity optional) {
+        this.quadra = optional;
     }
 
+	public List<ConvidadoEntity> getConvidados() {
+		return convidados;
+	}
+
+	public void setConvidados(List<ConvidadoEntity> convidados) {
+		this.convidados = convidados;
+	}
+
+    
 }

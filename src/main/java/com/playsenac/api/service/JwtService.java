@@ -29,11 +29,11 @@ public class JwtService {
 	@Autowired
 	private JwtDecoder decode;
 	
-	private int tempoExpiracao = 120;
+	private int tempoExpiracao = 72;
 	
 	public String gerarTokenJwt(UsuarioSistema usuario) {
 		Instant agora = Instant.now();
-		Instant expiracao = agora.plus(tempoExpiracao, ChronoUnit.MINUTES);
+		Instant expiracao = agora.plus(tempoExpiracao, ChronoUnit.HOURS);
 		String permissao = usuario.getRole().getNome();
 		JwtClaimsSet claims = JwtClaimsSet.builder()
 				.issuer("ver")
@@ -42,6 +42,7 @@ public class JwtService {
 				.subject(usuario.getNome())
 				.claim("email", usuario.getEmail())
 				.claim("permissao", permissao)
+				.claim("id", usuario.getId_usuario())
 				.build();
 		
 		JwsHeader jwsHeader = JwsHeader.with(MacAlgorithm.HS256).build();
@@ -71,9 +72,12 @@ public class JwtService {
 			Role permissao = new Role();
 			permissao.setNome(jwt.getClaimAsString("permissao"));
 			UsuarioSistema usuarioSistema = new UsuarioSistema(nome, jwt.getClaimAsString("email"), null, permissao);
+			Long idLong = jwt.getClaim("id"); 
+	        if (idLong != null) {
+	            usuarioSistema.setId_usuario(idLong.intValue());
+	        }
 			return usuarioSistema;
 		} catch(JwtException err) {
-			//log.warn("Validação do JWT falhou: {}", err.getMessage());
 		}
 		return null;
 	}

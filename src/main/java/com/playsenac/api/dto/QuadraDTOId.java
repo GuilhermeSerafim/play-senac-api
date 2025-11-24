@@ -1,12 +1,15 @@
 package com.playsenac.api.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import java.time.LocalTime;
 import java.util.List;
 
-public class QuadraDTO {
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
+public class QuadraDTOId {
+	
+	private int id;
 	
     @NotBlank
     @Size(min = 3)
@@ -26,11 +29,12 @@ public class QuadraDTO {
     
     private List<Integer> diasSemana;
     
-    public QuadraDTO() { }
+    public QuadraDTOId() { }
 
-    public QuadraDTO(String nome, boolean isBloqueada, LocalTime horarioAbertura, 
+    public QuadraDTOId(int id, String nome, boolean isBloqueada, LocalTime horarioAbertura, 
                      LocalTime horarioFechamento, Integer limiteJogadores, String imagemUrl, List<Integer> diasSemana) {
-        this.nome = nome;
+        this.id = id;
+    	this.nome = nome;
         this.isBloqueada = isBloqueada;
         this.horarioAbertura = horarioAbertura;
         this.horarioFechamento = horarioFechamento;
@@ -39,7 +43,15 @@ public class QuadraDTO {
         this.diasSemana = diasSemana;
     }
     
-    public String getNome() {
+    public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getNome() {
         return nome;
     }
 
