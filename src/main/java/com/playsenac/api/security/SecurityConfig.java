@@ -96,7 +96,9 @@ public class SecurityConfig {
 						
 						
 						.requestMatchers("/usuarios/buscar/**").hasAuthority("COMUM")
-						
+
+                        .requestMatchers("/api/public/**").permitAll()
+
 						.anyRequest().authenticated()
 						)
 				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
