@@ -81,6 +81,7 @@ public class UsuarioDTO {
         entity.setEmail(this.email);
         entity.setSenha(this.senha);
         entity.setTelefone(this.telefone);
+        // User default
         entity.setFkRole(1);
         return entity;
     }
