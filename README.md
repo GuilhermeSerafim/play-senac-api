@@ -20,6 +20,7 @@ Esta API concentra as regras do sistema de reservas:
 - Spring Data JPA
 - Spring Security + Resource Server
 - Bean Validation
+- Lombok
 - MySQL
 - Maven Wrapper
 - Springdoc OpenAPI
@@ -329,4 +330,3 @@ src/
 
 - Frontend: [play-senac](https://github.com/GuilhermeSerafim/play-senac)
 - Prototipo: [Figma](https://www.figma.com/proto/k0ublZXSnKWTw9W9YGRCF7/Play-Senac?node-id=74-66&t=imzkF1T5s64SmrGi-1)
-
