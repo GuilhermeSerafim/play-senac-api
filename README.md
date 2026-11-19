@@ -10,6 +10,73 @@ Backend de um projeto colaborativo de agendamento de quadras do Centro Universit
 
 Controllers/DTOs expõem operações REST; services concentram regras e repositories acessam MySQL por JPA. Há autenticação JWT, perfis COMUM/ADMIN e validações de colisão entre reservas e bloqueios. O banco usa atualização automática do schema; as roles precisam ser cadastradas manualmente.
 
+## Fluxo da API
+
+O Angular envia uma requisição HTTP. A API verifica o acesso, encaminha a operação para a regra de negócio e usa os repositories para consultar ou salvar dados.
+
+```mermaid
+flowchart TD
+    A["Angular<br/>HttpClient + authInterceptor"] -->|"HTTP e token quando disponível"| B["Spring Security<br/>Autenticação JWT e permissões da rota"]
+    B --> C{"Acesso permitido?"}
+    C -->|"Não"| X["Resposta de erro HTTP"]
+    C -->|"Sim"| D["Controllers<br/>Recebem rota, parâmetros e corpo da requisição"]
+    D --> E["Services<br/>Executam a operação e as regras de negócio"]
+    E <-->|"Consulta e persistência"| F["Repositories / JPA<br/>Acesso às entidades"]
+    F <--> G[("MySQL")]
+    E --> H["Resultado da operação"]
+    H --> I["Controller<br/>Resposta HTTP e dados quando aplicável"]
+    E -->|"Falha de validação ou conflito"| X
+    I --> J["Angular<br/>Atualiza a tela"]
+    X --> J
+```
+
+- **Segurança:** rotas públicas, como login e consulta de quadras, dispensam autenticação. Nas rotas protegidas, o token identifica o usuário e as permissões dependem do perfil `COMUM` ou `ADMIN`.
+- **Controllers e DTOs:** recebem os dados da requisição e definem os dados de entrada e saída das operações.
+- **Services:** concentram regras como verificar sobreposição de reservas, bloqueios de quadras e quem pode cancelar uma reserva.
+- **Repositories e entidades:** representam e acessam os registros no MySQL por meio do JPA.
+
+### Exemplo: criação de reserva
+
+```mermaid
+flowchart TD
+    A["POST /reservas<br/>Datas, quadra e convidados"] --> B["Segurança<br/>Exige perfil COMUM ou ADMIN"]
+    B --> C["ReservaController"]
+    C --> D["ReservaServiceImpl<br/>Identifica o usuário autenticado e busca a quadra"]
+    D --> E{"Datas em ordem e período<br/>sem bloqueio ou reserva conflitante?"}
+    E -->|"Não"| F["Erro HTTP<br/>Dados inválidos ou conflito"]
+    E -->|"Sim"| G["Associa convidados e salva a reserva<br/>ReservaRepository / MySQL"]
+    G --> H["Resposta de sucesso"]
+    H --> I["Angular atualiza a lista"]
+```
+
+O usuário da nova reserva é obtido da autenticação. O frontend envia os dados do agendamento; a decisão sobre aceitar a operação fica na API.
+
+## Estrutura de pastas
+
+```text
+play-senac-api/
+├── src/
+│   ├── main/
+│   │   ├── java/com/playsenac/api/
+│   │   │   ├── controller/       # Endpoints REST de login, usuários, quadras e reservas
+│   │   │   ├── dto/              # Objetos de entrada e saída das operações
+│   │   │   ├── entities/         # Entidades e relacionamentos mapeados pelo JPA
+│   │   │   ├── repository/       # Consultas e persistência no banco
+│   │   │   ├── security/         # JWT, perfis, permissões e configuração de CORS
+│   │   │   ├── service/          # Serviços e contratos das operações
+│   │   │   │   └── impl/         # Implementações das regras de negócio
+│   │   │   └── ApiApplication.java # Inicialização do Spring Boot
+│   │   └── resources/
+│   │       └── application.properties # Banco, JPA e configuração do token
+│   └── test/java/com/playsenac/api/ # Teste de carregamento do contexto
+├── .mvn/                         # Configuração do Maven Wrapper
+├── mvnw / mvnw.cmd               # Execução do Maven no Linux/macOS e Windows
+├── pom.xml                       # Dependências e configuração do build
+└── Dockerfile                    # Construção da imagem da API
+```
+
+Para localizar uma operação, comece por `controller/`, siga para `service/` e consulte `repository/` quando houver acesso ao banco. Os formatos dos dados estão em `dto/` e os relacionamentos persistidos em `entities/`.
+
 ## Instalação e configuração
 
 Requer Java 21 e MySQL 8 ou superior. O repositório inclui Maven Wrapper. No PowerShell, na raiz, configure um banco e credenciais locais:
