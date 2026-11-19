@@ -6,10 +6,6 @@ Backend de um projeto colaborativo de agendamento de quadras do Centro Universit
 
 [Frontend](https://github.com/GuilhermeSerafim/play-senac) · [Case](https://guiler.vercel.app). Não há alegação de disponibilidade atual da implantação original.
 
-## Minha contribuição e autoria
-
-Participei da documentação e integração do backend, incluindo healthcheck, Dockerfile para implantação, configuração por variáveis de ambiente e ajustes no controller de bloqueios. O desenvolvimento foi realizado em equipe; não atribuo toda a API a uma única pessoa.
-
 ## Arquitetura e implementação
 
 Controllers/DTOs expõem operações REST; services concentram regras e repositories acessam MySQL por JPA. Há autenticação JWT, perfis COMUM/ADMIN e validações de colisão entre reservas e bloqueios. O banco usa atualização automática do schema; as roles precisam ser cadastradas manualmente.
